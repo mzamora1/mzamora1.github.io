@@ -1,15 +1,16 @@
-let doorKnob,redCircle;
 let trans = 1000;
 let ins1,ins2;
 let ins1IsPlaying = false;
 let ins2IsPlaying = false;
 let extraCanvas;
-let button, homeBtn;
+let button;
 let compliments;
+let rangeX = 180;
+let rangeY = 206;
 
 function preload(){
-    ins1 = loadSound('assets/sounds/Click.mp3');
-    ins2 = loadSound('assets/sounds/Twist.mp3');
+    ins1 = loadSound('assets/Click.mp3');
+    ins2 = loadSound('assets/Twist.mp3');
 }
 function setup() {
     homeBtn = createButton("Home");
@@ -19,9 +20,10 @@ function setup() {
     createCanvas(400, 400);
     button = createButton("Instruction");
     button.mouseClicked(() => {
-        button.hide();
+        buttonhide();
         ins1.play();
     });
+    
 }
 function draw() {
     drawBackground();
@@ -30,9 +32,11 @@ function draw() {
     let circleX = 180;
     let circleY = 206;
 
-    if(mouseIsPressed && mouseX>=123 && mouseX<=188 && mouseY>=198 && mouseY<=273){ //if mouse pressed in bounds then rotate handle
+    if(mouseIsPressed && inTheRange() == true){ //if mouse pressed in bounds then rotate handle
         rotateHandle(handleX, handleY);
         rotateCircle(circleX, circleY);
+        rangeX = circleX;
+        rangeY = circleY;
         ins1.stop();
         if(ins2.isPlaying() == false && !ins2IsPlaying){
             ins2.play();
@@ -53,12 +57,13 @@ function rotateHandle(posX, posY){
     let angle = Math.atan2(mouseY-posY, mouseX-posX);
     if(angle >= 1.3){
         console.log("handle turned");
+        buttonhide();
         success();
     }
     translate(123,198);
     rotate(angle);
     fill(255,197,4,trans);
-    doorKnob = rect(0,0,65,17);
+    rect(0,0,65,17);
 }
 function rotateCircle(posX, posY){
     let angle = Math.atan2(mouseY-posY, mouseX-posX);
@@ -67,7 +72,7 @@ function rotateCircle(posX, posY){
     stroke(255,0,0,trans);
     strokeWeight(3.5);
     fill(0,0,0,0);
-    redCircle = circle(0,0,35);
+    circle(0,0,35);
     stroke(0,0,0,trans);
     strokeWeight(0.5);
 }
@@ -87,3 +92,16 @@ function success(){
     compliments.position(123, 100);
     textSize(50);
 }
+function buttonhide(){
+    button.hide();
+}
+function inTheRange(){
+    if(mouseX>=123 && mouseX<=188 && mouseY>=198 && mouseY<=273){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+//((mouseX-rangeX)^2 + (mouseY-rangeY)^2 <= 35)
