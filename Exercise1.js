@@ -5,8 +5,6 @@ let ins2IsPlaying = false;
 let extraCanvas;
 let button;
 let compliments;
-let rangeX = 180;
-let rangeY = 206;
 
 function preload(){
     ins1 = loadSound('assets/sounds/Click.mp3');
@@ -35,8 +33,6 @@ function draw() {
     if(mouseIsPressed && inTheRange() == true){ //if mouse pressed in bounds then rotate handle
         rotateHandle(handleX, handleY);
         rotateCircle(circleX, circleY);
-        rangeX = circleX;
-        rangeY = circleY;
         ins1.stop();
         if(ins2.isPlaying() == false && !ins2IsPlaying){
             ins2.play();
