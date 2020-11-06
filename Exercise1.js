@@ -9,8 +9,8 @@ let rangeX = 180;
 let rangeY = 206;
 
 function preload(){
-    ins1 = loadSound('assets/Click.mp3');
-    ins2 = loadSound('assets/Twist.mp3');
+    ins1 = loadSound('assets/sounds/Click.mp3');
+    ins2 = loadSound('assets/sounds/Twist.mp3');
 }
 function setup() {
     homeBtn = createButton("Home");
