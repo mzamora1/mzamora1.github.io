@@ -16,7 +16,7 @@ body{
 }
 
 .navitem{
-  border-style: dotted;
+  border-style: solid;
   padding: 10px;
   display: inline-flex;
   margin: 20px;
