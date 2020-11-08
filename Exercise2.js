@@ -191,40 +191,40 @@ function draw() {
       strokeWeight(10); stroke(0); fill(255);
       background(255);
       startBtn.show();
-      startBtn.position((width/2)-50,370);
+      startBtn.position((width/2)-50,(height/2)+80);
       userInput.show();
       userInput.position((width/2)-100, height-50);
       noStroke(); fill(0); textSize(50);
-      text("Instructions",width/2,50);
+      text("Instructions",width/2,(height/2)-220);
       textSize(30);
       text("Type the words that show up on screen.\n"+
            "Press space whenever the prompt is blank\n"+
-           "Find out if you are a true homie.",width/2,200);
+           "Find out if you are a true homie.",width/2,(height/2)-80);
       break;
 
     case "playing":
     //code for playing game
       background(33, 96, 212);
-      nukeAnimation.draw(width/2,200);
+      nukeAnimation.draw(width/2,(height/2)-80);
       fill(150,150,150);
-      rect((width/2)-200,342,400,50);
+      rect((width/2)-200,(height/2)+60,400,50);
       fill(0); textSize(40);
-      text(currentPrompt, (width/2),350);
+      text(currentPrompt, (width/2),(height/2)+70);
       fill(103, 168, 97); textSize(50);
-      text("Typing with Dead Pirate Jack",(width/2),10);
+      text("Typing with Dead Pirate Jack",(width/2),(height/2)-260);
       fill(103, 168, 97); textSize(30);
-      text("Words Typed: "+wordsTyped,(width/2)-180,410);
+      text("Words Typed: "+wordsTyped,(width/2)-180,(height/2)+130);
       fill(230, 79, 76);
-      text("Errors: "+errors,(width/2)+180,410);
+      text("Errors: "+errors,(width/2)+180,(height/2)+130);
       let badX = map(errors, 0, 5, 0, width); 
       let goodX = map(wordsTyped, 0, wordCount, 0, width); 
       stroke(230, 79, 76); strokeWeight(25); 
-      line(0,height-70,badX,height-70); //error bar
+      line(0,(height/2)+180,badX,(height/2)+180); //error bar
       stroke(103, 168, 97);
-      line(0,height-100,goodX,height-100); //progress bar
+      line(0,(height/2)+210,goodX,(height/2)+210); //progress bar
       if(goodX >= width){ //if progress bar is full then get ready to celebrate 
         celebrateBtn.show();
-        celebrateBtn.position((width/2)-50, 80);
+        celebrateBtn.position((width/2)-50, (height/2)-100);
         userInput.hide();
         background(bg);
         if(firstTime){
@@ -232,7 +232,7 @@ function draw() {
           timeToComplete = (millis()-startTime)/1000;
         }
         fill(255); noStroke();
-        text("You completed all prompts in "+ timeToComplete.toFixed(2) + " seconds", width/2,200);
+        text("You completed all prompts in "+ timeToComplete.toFixed(2) + " seconds", width/2,(height/2));
       }
       if(badX >= width){ //if error bar is full then game over loser
         gameState = "game over"
@@ -273,11 +273,10 @@ function draw() {
     //code for lose screen
       background(0);
       fill(255); textSize(35);
-      text("You Lose",widht/2,295);
+      text("You Lose",width/2,(height/2)+100);
       userInput.hide();
-      spinnyAnimation.draw(width/2,150,x);
+      spinnyAnimation.draw(width/2,(height/2)-100,x);
       x++;
   }
 }
 let x=0;
-
