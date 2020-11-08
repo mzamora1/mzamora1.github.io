@@ -62,13 +62,14 @@ function checkInput(){ //compares last key pressed by user to the next character
     if(currentPrompt.length == 0){ //if sentence is typed correctly then clear input field and go to next sentence
       index++;
       currentPrompt = promptList[index];
-      if(promptList.length == index){ //if all sentences have been completed, stop the animation to save resources for the many many balls to come
+      if(promptList.length-1 == index){ //if all sentences have been completed, stop the animation to save resources for the many many balls to come
         nukeAnimation.stop();
       }
       subWordsTyped=0;
       userInput.value("");
     }
   }
+
   else{ //if wrong input then reset progress bar, prompt, userInput and play the fail sound
     if(!failSound.isPlaying()){
       failSound.play();
@@ -97,9 +98,11 @@ function preload(){
 function setup() {
   frameRate(60); textSize(20); textAlign(CENTER,TOP);
   div = createDiv();
-  canvas = createCanvas(400, 350);
+  canvas = createCanvas(window.outerWidth-15, window.outerHeight-122);
   wordCount = calculateWordCount(promptList);
   userInput = createInput('type here');
+  userInput.size(200, 30);
+  userInput.style("font-size", "25px");
   userInput.mouseClicked(() => { //clear input field when clicked
     userInput.value("");
   });
@@ -132,6 +135,7 @@ function setup() {
   homeBtn.mouseClicked(() => {
     window.open("home.html", "_self");
   });
+  homeBtn.position(50, height-50)
 
   div
     .child(canvas)
@@ -140,8 +144,7 @@ function setup() {
     .child(celebrateBtn)
     .child(homeBtn)
     .style("position", "relative")
-    .style("width", "fit-content");
-  
+    //.style("width", "fit-content");
   currentPrompt = promptList[0];
 
   for(var i = 0; i < funFactor; i++){ //fills array circleMovers with circleMovers to be used for moving objects
@@ -149,6 +152,7 @@ function setup() {
   }
   growlingAnimation.frameDelay = 3;
   storyAnimations.push(eatingAnimation, growlingAnimation, attackAnimation);
+  twoPac.setVolume(0.2);
   twoPac.play();
   twoPac.jump(17);
 } 
@@ -157,24 +161,20 @@ function setup() {
 
 let pic =0;
 let timeStarted = 0;
-//let timings = [1,1,1,1,1];
-let timings = [5,5,10,10,10];
+let timings = [1,1,1,1,1];
+//let timings = [5,5,10,10,10];
 let firstTime=true;
 function draw() {
   clear();
-  div //center the whole exercise dynamically 
-    .style("left", `${floor(window.outerWidth/2-width/2)}px`)
-    .style("top", "50px");
-
   switch(gameState){
     default:
       startBtn.hide();
       userInput.hide();
       if(pic==0){
-        image(pinkDutch,0,0,400,350);
+        image(pinkDutch,(width/2)-200,0,400,350);
       }
       else if(pic-1 < storyAnimations.length){
-        storyAnimations[pic-1].draw(200,150);
+        storyAnimations[pic-1].draw(width/2,150);
       }
       else{
         twoPac.stop();
@@ -189,50 +189,50 @@ function draw() {
     case "instructions":
     //code for instruction screen
       strokeWeight(10); stroke(0); fill(255);
-      rect(0,0,400,350);
+      background(255);
       startBtn.show();
-      startBtn.position(160,270);
+      startBtn.position((width/2)-50,370);
       userInput.show();
-      userInput.position((width/2)-75, height+7);
-      noStroke(); fill(0); textSize(40);
-      text("Instructions",200,50);
-      textSize(20);
+      userInput.position((width/2)-100, height-50);
+      noStroke(); fill(0); textSize(50);
+      text("Instructions",width/2,50);
+      textSize(30);
       text("Type the words that show up on screen.\n"+
            "Press space whenever the prompt is blank\n"+
-           "Find out if you are a true homie.",200,150);
+           "Find out if you are a true homie.",width/2,200);
       break;
 
     case "playing":
     //code for playing game
       background(33, 96, 212);
-      nukeAnimation.draw(200,150);
+      nukeAnimation.draw(width/2,200);
       fill(150,150,150);
-      rect(50,260,300,50);
-      fill(0); textSize(30);
-      text(currentPrompt, 5,275,400,200);
+      rect((width/2)-200,342,400,50);
+      fill(0); textSize(40);
+      text(currentPrompt, (width/2),350);
+      fill(103, 168, 97); textSize(50);
+      text("Typing with Dead Pirate Jack",(width/2),10);
       fill(103, 168, 97); textSize(30);
-      text("Typing with Dead Pirate Jack",5,10,400,200);
-      fill(103, 168, 97); textSize(20);
-      text("Words Typed: "+wordsTyped,75,315);
+      text("Words Typed: "+wordsTyped,(width/2)-180,410);
       fill(230, 79, 76);
-      text("Errors: "+errors,355,315);
+      text("Errors: "+errors,(width/2)+180,410);
       let badX = map(errors, 0, 5, 0, width); 
       let goodX = map(wordsTyped, 0, wordCount, 0, width); 
-      stroke(230, 79, 76); strokeWeight(10); 
-      line(0,337,badX,337); //error bar
+      stroke(230, 79, 76); strokeWeight(25); 
+      line(0,height-70,badX,height-70); //error bar
       stroke(103, 168, 97);
-      line(0,345,goodX,345); //progress bar
+      line(0,height-100,goodX,height-100); //progress bar
       if(goodX >= width){ //if progress bar is full then get ready to celebrate 
         celebrateBtn.show();
-        celebrateBtn.position(140, 80);
+        celebrateBtn.position((width/2)-50, 80);
         userInput.hide();
-        image(bg,0,0,400,350);
+        background(bg);
         if(firstTime){
           firstTime = false;
           timeToComplete = (millis()-startTime)/1000;
         }
         fill(255); noStroke();
-        text("You completed all prompts in "+ timeToComplete.toFixed(2) + " seconds", 200,200);
+        text("You completed all prompts in "+ timeToComplete.toFixed(2) + " seconds", width/2,200);
       }
       if(badX >= width){ //if error bar is full then game over loser
         gameState = "game over"
@@ -243,9 +243,10 @@ function draw() {
     case "celebrate":
     //code for celebration screen
       userInput.show();
+      userInput.position((width/2)-80, height-50);
       userInput.value("Click the circles!");
       userInput.style("font-weight: bold");
-      image(bg,0,0,400,350);
+      background(bg);
       for(var i = 0; i < circleMovers.length; i++){
         circleMovers[i].updatePosition(); //calculate the XY coordinates of each vector
         let mouseIsOverCircle = dist(mouseX, mouseY, circleMovers[i].position.x, circleMovers[i].position.y) < circleMovers[i].size;
@@ -260,22 +261,23 @@ function draw() {
         }
         else circleMovers[i].velocity = circleMovers[i].startingVelocity;
         if(circleMovers[i] != undefined){
-        fill(circleMovers[i].color.r, circleMovers[i].color.g, circleMovers[i].color.b);
-        circle(circleMovers[i].position.x, circleMovers[i].position.y, circleMovers[i].size); //draw a circle with XY coordinates of each vector
+          fill(circleMovers[i].color.r, circleMovers[i].color.g, circleMovers[i].color.b);
+          circle(circleMovers[i].position.x, circleMovers[i].position.y, circleMovers[i].size); //draw a circle with XY coordinates of each vector
         }
       }
       textSize(50); fill(255);
-      text("You rock!",200,150);
+      text("You rock!",width/2,height/2);
       break;
 
     case "game over":  
     //code for lose screen
       background(0);
       fill(255); textSize(35);
-      text("You Lose",200,295);
+      text("You Lose",widht/2,295);
       userInput.hide();
-      spinnyAnimation.draw(200,150,x);
+      spinnyAnimation.draw(width/2,150,x);
       x++;
   }
 }
 let x=0;
+
