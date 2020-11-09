@@ -1,10 +1,10 @@
 let nukeAnimation, spinnyAnimation, eatingAnimation, growlingAnimation, attackAnimation, bg; //pictures and animations
-let div, canvas, userInput, homeBtn, startBtn, celebrateBtn; //GUI variables
+let canvas, userInput, homeBtn, startBtn, celebrateBtn, skipBtn; //GUI variables
 let startSound, failSound, twoPac; //sound variables
 let currentPrompt, errors=0, wordsTyped=0, wordCount, gameState, timeToComplete, startTime; //game variables
-let promptList = ["Once upon a time ", "there was a pirate ", "named dp jack ", "he turned into a bomb ", "and now hes dead " ]; //array storing all prompts
+let promptList = ["Once upon a time "]//, "there was a pirate ", "named dp jack ", "he turned into a bomb ", "and now hes dead " ]; //array storing all prompts
 let circleMovers = []; //array that will store circleMovers 
-let funFactor = 50; //how much fun you wanna have? too much fun can crash the game
+let funFactor = Math.floor(window.outerWidth/24); //how much fun you wanna have? too much fun can crash the game
 let storyAnimations = [];
 
 class circleMover{ //makes moving objects easier by handling all vector math
@@ -97,7 +97,7 @@ function preload(){
 
 function setup() {
   frameRate(60); textSize(20); textAlign(CENTER,TOP);
-  div = createDiv();
+  
   canvas = createCanvas(window.outerWidth-15, window.outerHeight-122);
   wordCount = calculateWordCount(promptList);
   userInput = createInput('type here');
@@ -135,16 +135,16 @@ function setup() {
   homeBtn.mouseClicked(() => {
     window.open("home.html", "_self");
   });
-  homeBtn.position(50, height-50)
+  homeBtn.position(50, (height/2)+240)
 
-  div
-    .child(canvas)
-    .child(userInput)
-    .child(startBtn)
-    .child(celebrateBtn)
-    .child(homeBtn)
-    .style("position", "relative")
-    //.style("width", "fit-content");
+  skipBtn = createButton("Skip");
+  skipBtn.position((width/2),(height/2)+220)
+  skipBtn.mouseClicked(() => {
+    gameState = "instructions";
+    twoPac.stop();
+    skipBtn.hide();
+  })
+  
   currentPrompt = promptList[0];
 
   for(var i = 0; i < funFactor; i++){ //fills array circleMovers with circleMovers to be used for moving objects
@@ -161,8 +161,8 @@ function setup() {
 
 let pic =0;
 let timeStarted = 0;
-let timings = [1,1,1,1,1];
-//let timings = [5,5,10,10,10];
+let timings = [1,1,1,1];
+//let timings = [5,5,10,10];
 let firstTime=true;
 function draw() {
   clear();
@@ -171,13 +171,14 @@ function draw() {
       startBtn.hide();
       userInput.hide();
       if(pic==0){
-        image(pinkDutch,(width/2)-200,0,400,350);
+        background(pinkDutch);
       }
       else if(pic-1 < storyAnimations.length){
-        storyAnimations[pic-1].draw(width/2,150);
+        storyAnimations[pic-1].draw((width/2)+20,(height/2));
       }
       else{
         twoPac.stop();
+        skipBtn.hide();
         gameState="instructions";
       }
       if((millis()-timeStarted) > (timings[pic]*1000)){
@@ -193,7 +194,7 @@ function draw() {
       startBtn.show();
       startBtn.position((width/2)-50,(height/2)+80);
       userInput.show();
-      userInput.position((width/2)-100, height-50);
+      userInput.position((width/2)-100, (height/2)+240);
       noStroke(); fill(0); textSize(50);
       text("Instructions",width/2,(height/2)-220);
       textSize(30);
@@ -243,7 +244,7 @@ function draw() {
     case "celebrate":
     //code for celebration screen
       userInput.show();
-      userInput.position((width/2)-80, height-50);
+      userInput.position((width/2)-80, (height/2)+240);
       userInput.value("Click the circles!");
       userInput.style("font-weight: bold");
       background(bg);
@@ -252,9 +253,9 @@ function draw() {
         let mouseIsOverCircle = dist(mouseX, mouseY, circleMovers[i].position.x, circleMovers[i].position.y) < circleMovers[i].size;
         if(mouseIsOverCircle){ //then stop that circle and change color
           circleMovers[i].velocity = 0;
-          circleMovers[i].color.r = floor(random(0,256));
-          circleMovers[i].color.b = floor(random(0,256));
-          circleMovers[i].color.g = floor(random(0,256));
+          circleMovers[i].color.r = Math.floor(random(0,256));
+          circleMovers[i].color.b = Math.floor(random(0,256));
+          circleMovers[i].color.g = Math.floor(random(0,256));
           if(mouseIsPressed){
             circleMovers = circleMovers.filter(mover => mover != circleMovers[i]); //add every mover besides the one that was clicked to circleMovers (remove the one that was clicked)
           }
@@ -275,8 +276,8 @@ function draw() {
       fill(255); textSize(35);
       text("You Lose",width/2,(height/2)+100);
       userInput.hide();
-      spinnyAnimation.draw(width/2,(height/2)-100,x);
-      x++;
+      spinnyAnimation.draw(width/2, (height/2)-100, rotation);
+      rotation++;
   }
 }
-let x=0;
+let rotation=0;
