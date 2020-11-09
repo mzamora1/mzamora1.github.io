@@ -2,7 +2,7 @@ let nukeAnimation, spinnyAnimation, eatingAnimation, growlingAnimation, attackAn
 let canvas, userInput, homeBtn, startBtn, celebrateBtn, skipBtn; //GUI variables
 let startSound, failSound, twoPac; //sound variables
 let currentPrompt, errors=0, wordsTyped=0, wordCount, gameState, timeToComplete, startTime; //game variables
-let promptList = ["Once upon a time "]//, "there was a pirate ", "named dp jack ", "he turned into a bomb ", "and now hes dead " ]; //array storing all prompts
+let promptList = ["Once upon a time ", "there was a pirate ", "named dp jack ", "he turned into a bomb ", "and now hes dead " ]; //array storing all prompts
 let circleMovers = []; //array that will store circleMovers 
 let funFactor = Math.floor(window.outerWidth/24); //how much fun you wanna have? too much fun can crash the game
 let storyAnimations = [];
