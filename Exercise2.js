@@ -1,8 +1,8 @@
 let nukeAnimation, spinnyAnimation, eatingAnimation, growlingAnimation, attackAnimation, bg; //pictures and animations
-let canvas, userInput, homeBtn, startBtn, celebrateBtn, skipBtn; //GUI variables
+let canvas, userInput, homeBtn, startBtn, celebrateBtn, skipBtn, promptP; //GUI variables
 let startSound, failSound, twoPac; //sound variables
 let currentPrompt, errors=0, wordsTyped=0, wordCount, gameState, timeToComplete, startTime; //game variables
-let promptList = ["Once upon a time ", "there was a pirate ", "named dp jack ", "he turned into a bomb ", "and now hes dead " ]; //array storing all prompts
+let promptString = "once upon a time there was a pirate named dp jack he turned into a bomb and now hes dead"; //array storing all prompts
 let circleMovers = []; //array that will store circleMovers 
 let funFactor = Math.floor(window.outerWidth/24); //how much fun you wanna have? too much fun can crash the game
 let storyAnimations = [];
@@ -25,29 +25,26 @@ class circleMover{ //makes moving objects easier by handling all vector math
     let positionX = this.position.x;
     let positionY = this.position.y;
     if ((positionX > width-10) || (positionX< 10)) {
-      this.velocity.x = this.velocity.x * -1;
+      this.velocity.x *= -1;
     }
     if ((positionY > height-10) || (positionY < 10)) {
-      this.velocity.y = this.velocity.y * -1;
+      this.velocity.y *= -1;
     }
   }
 }
 
 function calculateWordCount(prompts){ //calculates the total number of words in the whole prompt
   let words = 0;
-  for(let i = 0; i < prompts.length; i++){
-    for(let j = 0; j < prompts[i].length; j++){
-      if(prompts[i].substring(j,j+1) == " ") words++;
+    for(let i = 0; i < prompts.length; i++){
+      if(prompts[i] == " ") words++;
     }
-  }
-  return words;
+  return prompts[prompts.length-1] == " " ? words : words + 1; //if space is last character of prompt, then return words, else return words plus 1
 }
 
-let subWordsTyped = 0;
+let subLettersTyped = "";
 let firstInput = true;
-let index = 0;
 function checkInput(){ //compares last key pressed by user to the next character of the prompt
-  if(firstInput){
+  if(firstInput && gameState == "playing"){
     firstInput = false; 
     startTime = millis();
   }  
@@ -55,30 +52,23 @@ function checkInput(){ //compares last key pressed by user to the next character
   let nextLetter = currentPrompt[0];
   if(lastInput == nextLetter){//if user typed correct character, delete first character of current prompt 
     currentPrompt = currentPrompt.substring(1);
+    subLettersTyped += lastInput;
     if(keyIsDown(32)){ //if space is pressed then a word has been typed correctly
       wordsTyped++;
-      subWordsTyped++;
-    }
-    if(currentPrompt.length == 0){ //if sentence is typed correctly then clear input field and go to next sentence
-      index++;
-      currentPrompt = promptList[index];
-      if(promptList.length-1 == index){ //if all sentences have been completed, stop the animation to save resources for the many many balls to come
-        nukeAnimation.stop();
-      }
-      subWordsTyped=0;
-      userInput.value("");
+      subLettersTyped = "";
+    } else if(currentPrompt.length == 0){
+      wordsTyped++;
     }
   }
 
-  else{ //if wrong input then reset progress bar, prompt, userInput and play the fail sound
+  else if(gameState == "playing"){ //if wrong input then reset progress bar, prompt, userInput and play the fail sound
     if(!failSound.isPlaying()){
       failSound.play();
       errors++;
-      wordsTyped= wordsTyped - subWordsTyped;
-      subWordsTyped = 0;
     }
       userInput.value("");
-      currentPrompt = promptList[index];
+      currentPrompt = subLettersTyped + currentPrompt;
+      subLettersTyped = "";
   }
 }
 
@@ -99,10 +89,10 @@ function setup() {
   frameRate(60); textSize(20); textAlign(CENTER,TOP);
   
   canvas = createCanvas(window.outerWidth-15, window.outerHeight-122);
-  wordCount = calculateWordCount(promptList);
+  wordCount = calculateWordCount(promptString);
   userInput = createInput('type here');
   userInput.size(200, 30);
-  userInput.style("font-size", "25px");
+  userInput.style("font-size: 25px");
   userInput.mouseClicked(() => { //clear input field when clicked
     userInput.value("");
   });
@@ -119,7 +109,7 @@ function setup() {
   startBtn.mouseClicked(() => { //start the game and hide the button
     gameState = "playing";
     startBtn.hide();
-    userInput.value("");
+    userInput.value("type here");
     userInput.input(checkInput); //everytime input is detected, checkInput() is called
     startSound.play(); //tis i, the flying dutchman
   });
@@ -135,7 +125,7 @@ function setup() {
   homeBtn.mouseClicked(() => {
     window.open("home.html", "_self");
   });
-  homeBtn.position(50, (height/2)+240)
+  homeBtn.position((width/2)-300, (height/2)+240)
 
   skipBtn = createButton("Skip");
   skipBtn.position((width/2),(height/2)+220)
@@ -143,10 +133,22 @@ function setup() {
     gameState = "instructions";
     twoPac.stop();
     skipBtn.hide();
-  })
-  
-  currentPrompt = promptList[0];
+  });
 
+  currentPrompt = promptString;
+
+  promptP = createP("");
+  promptP
+    .style("letter-spacing: 20px")
+    .style("font-size: 40px")
+    .style("overflow: hidden")
+    .style("white-space: pre")
+    .style("font-family: 'Courier New', Courier, monospace")
+    .size(380,50)
+    .position((width/2)-180,(height/2)+35)
+    .html(currentPrompt)
+    .hide();
+  
   for(var i = 0; i < funFactor; i++){ //fills array circleMovers with circleMovers to be used for moving objects
     circleMovers.push(new circleMover());
   }
@@ -209,9 +211,12 @@ function draw() {
       nukeAnimation.draw(width/2,(height/2)-80);
       fill(150,150,150);
       rect((width/2)-200,(height/2)+60,400,50);
-      fill(0); textSize(40);
-      text(currentPrompt, (width/2),(height/2)+70);
-      fill(103, 168, 97); textSize(50);
+      fill(249, 252, 61);
+      rect((width/2)-200, (height/2)+60, 45, 50);
+      
+      promptP.show();
+      promptP.html(currentPrompt);
+      fill(103, 168, 97); textSize(50); 
       text("Typing with Dead Pirate Jack",(width/2),(height/2)-260);
       fill(103, 168, 97); textSize(30);
       text("Words Typed: "+wordsTyped,(width/2)-180,(height/2)+130);
