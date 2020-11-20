@@ -1,22 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang = "en">
+    <head>
+        <link href="ex2.css" rel="stylesheet" />
+        <link href="/Exercise 2/navbar.css" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v5.15.1/js/all.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
 
-    <title>Typing with dead Pirate Jack</title>
+        <div class="navbar" id="nav">
+            <a href="exSplash.html">Home</a>
+            <a href="#" id = "settingsLink" >Settings</a>
+            <div class="dropdown">
+              <button class="dropbtn">Dropdown <i class="fa fa-caret-down"></i> </button>
+              <div class="dropdown-content">
+                <a href="/Exercise 2/Exercise1.html">Exercise 1</a>
+                <a href="/Exercise 2/Exercise2.html">Exercise 2</a>
+                <a href="/Exercise 2/Exercise3.html">Exercise 3</a>
+              </div>
+            </div> 
+        </div>
 
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="libraries/p5.min.js"></script> 
-    <script src="libraries/p5.sound.min.js"></script>
-    <script src="libraries/p5.play.js" type="text/javascript"></script> 
-  </head>
+        <div id="instructions">
+            <h1>Instructions</h1>
+            <h2>Type the words that show up on screen</h2>
+            <h2>Press space whenever the prompt is blank</h2>
+            <h2>Find out if you are a true homie</h2>
+            <button id="startBtn">Start Game</button>
+        </div>
 
-  <body>
-      <div id="p5_loading" class="loadingclass">this could be some sweet graphics loading lots of bits. Text center.
-        <img src="assets/pics/loading.gif" alt="Loading....">
-      </div>
-      <script src="Exercise2.js"></script> 
-    
-  </body>
+        <div id="playing">
+            <audio src="/Exercise 2/assets/sounds/flying-dutchman.mp3" id="startSound" preload="auto"></audio>
+            <audio src="/Exercise 2/assets/sounds/scallywags.mp3" id="failSound" preload="auto"></audio>
+            <h2>Typing with Dead Pirate Jack</h2>
+            <div>
+                <div class="container">
+                    <p style="color: rgb(255, 0, 0);">Errors: <span id="errors">0</span></p>
+                    <p style="color: rgb(0, 255, 0);">Words Typed: <span id="wordsTyped">0</span></p>
+                </div>
+                <img width="400" height="300" src="" alt="" id="gameImg">
+            </div>
+            <div id="progressBar"></div>
+            <div id="errorBar"></div>
+            <p id="prompt">youre using a browser without javascript loser</p>
+            <input type="text" id="userInput" autocomplete="off" value="">
+        </div>
+
+        <div id="stats">
+            <h1>Stats</h1>
+            <h2>You completed the prompt in <span id="timeToComplete">0</span> seconds</h2>
+            <button id="celebrateBtn">Click to Celebrate!</button>
+        </div>
+
+        <div id="celebrate">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div id="lose">
+            <img src="/Exercise 2/assets/pics/spinnyhead.gif" alt="" id="spinny">
+            <h1>You Lose</h1>
+        </div>
+        <!-- The Modal -->
+        <div id="settings" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Settings</h2>
+                <label for="volumeSlider">Volume: <span id="volume">20</span>%</label>
+                <input type="range" id="volumeSlider" min="0" max="100" value="0">
+                <br> <br>
+                <label for="sizeSlider">Circle Size: <span id="size">100</span>%</label>
+                <input type="range" id="sizeSlider" min="10" max="130" value="100">
+                <br> <br>
+                <label for="speedSlider">Circle Speed: <span id="speed">30</span>%</label>
+                <input type="range" id="speedSlider" min="1" max="100" value="30">
+                <br><br>
+                <label for="difficulty">Difficulty: </label>
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="normal">Normal</option>
+                    <option value="extreme">Extreme</option>
+                  </select>
+            </div>
+        </div>
+        
+        <script src="/ex2.js"></script>
+    </body>
 </html>
