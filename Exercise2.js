@@ -1,288 +1,324 @@
-let nukeAnimation, spinnyAnimation, eatingAnimation, growlingAnimation, attackAnimation, bg; //pictures and animations
-let canvas, userInput, homeBtn, startBtn, celebrateBtn, skipBtn, promptP; //GUI variables
-let startSound, failSound, twoPac; //sound variables
-let currentPrompt, errors=0, wordsTyped=0, wordCount, gameState, timeToComplete, startTime; //game variables
-let promptString = "once upon a time there was a pirate named dp jack he turned into a bomb and now hes dead"; //array storing all prompts
-let circleMovers = []; //array that will store circleMovers 
-let funFactor = Math.floor(window.outerWidth/24); //how much fun you wanna have? too much fun can crash the game
-let storyAnimations = [];
+"use strict";
+const navbar = document.getElementById("nav");
+const instructions = document.getElementById("instructions");
+const playing = document.getElementById("playing");
+const stats = document.getElementById("stats");
+const celebrate = document.getElementById("celebrate");
+const lose = document.getElementById("lose");
+const img = document.getElementById("gameImg");
+const volumeSlider = document.getElementById("volumeSlider");
+const sizeSlider = document.getElementById("sizeSlider");
+const speedSlider = document.getElementById("speedSlider");
+const diffDropdown = document.getElementById("difficulty");
+const startSound = document.getElementById("startSound");
+const failSound = document.getElementById("failSound");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+var mouseIsPressed = false;
+var mouseX, mouseY;
+var circleArray;
 
-class circleMover{ //makes moving objects easier by handling all vector math
-  constructor(){
-    this.startingVelocity = p5.Vector.random2D();
-    this.startingVelocity.mult(3);
-    this.position = createVector(width/2, height/2); //starting position is center of canvas
-    this.velocity = this.startingVelocity //calculate random inital starting velocity
-    this.size = 20;
-    this.color = {
-      r: 0,
-      g: 0,
-      b: 0
-    }
-  }
-  updatePosition(){ //calculate the new position after moving in the direction of the random vector
-    this.position.add(this.velocity); //move the object by vector
-    let positionX = this.position.x;
-    let positionY = this.position.y;
-    if ((positionX > width-10) || (positionX< 10)) {
-      this.velocity.x *= -1;
-    }
-    if ((positionY > height-10) || (positionY < 10)) {
-      this.velocity.y *= -1;
-    }
-  }
+window.onresize = () => { //resize the canvas dynamically
+    canvas.width = navbar.clientWidth; 
+    canvas.height =  window.innerHeight- navbar.clientHeight-10;
+}
+canvas.onmousemove = (event) => {
+    mouseX = event.offsetX;
+    mouseY = event.offsetY;
+}
+canvas.onmousedown = function() { 
+    mouseIsPressed = true;
+}
+canvas.onmouseup = function() {
+    mouseIsPressed = false;
 }
 
-function calculateWordCount(prompts){ //calculates the total number of words in the whole prompt
-  let words = 0;
-    for(let i = 0; i < prompts.length; i++){
-      if(prompts[i] == " ") words++;
-    }
-  return prompts[prompts.length-1] == " " ? words : words + 1; //if space is last character of prompt, then return words, else return words plus 1
-}
-
-let subLettersTyped = "";
-let firstInput = true;
-function checkInput(){ //compares last key pressed by user to the next character of the prompt
-  if(firstInput && gameState == "playing"){
-    firstInput = false; 
-    startTime = millis();
-  }  
-  let lastInput = this.value()[this.value().length - 1]; 
-  let nextLetter = currentPrompt[0];
-  if(lastInput == nextLetter){//if user typed correct character, delete first character of current prompt 
-    currentPrompt = currentPrompt.substring(1);
-    subLettersTyped += lastInput;
-    if(keyIsDown(32)){ //if space is pressed then a word has been typed correctly
-      wordsTyped++;
-      subLettersTyped = "";
-    } else if(currentPrompt.length == 0){
-      wordsTyped++;
-    }
-  }
-
-  else if(gameState == "playing"){ //if wrong input then reset progress bar, prompt, userInput and play the fail sound
-    if(!failSound.isPlaying()){
-      failSound.play();
-      errors++;
-    }
-      userInput.value("");
-      currentPrompt = subLettersTyped + currentPrompt;
-      subLettersTyped = "";
-  }
-}
-
-function preload(){
-  nukeAnimation = loadAnimation('assets/nukeAnimation/001.png', 'assets/nukeAnimation/167.png');
-  spinnyAnimation = loadAnimation('assets/spinnyAnimation/00.png', 'assets/spinnyAnimation/12.png');
-  growlingAnimation = loadAnimation('assets/growlingAnimation/01.png', 'assets/growlingAnimation/13.png');
-  eatingAnimation = loadAnimation('assets/eatingAnimation/01.png', 'assets/eatingAnimation/22.png');
-  attackAnimation = loadAnimation('assets/attackAnimation/001.png', 'assets/attackAnimation/143.png');
-  startSound = loadSound("assets/sounds/flying-dutchman.mp3");
-  failSound = loadSound("assets/sounds/scallywags.mp3");
-  twoPac = loadSound("assets/sounds/2Pac.mp3");
-  bg = loadImage("assets/pics/background.jpg");
-  pinkDutch = loadImage("assets/pics/Flying dutchman wearing pink dress.png");
-}
-
-function setup() {
-  frameRate(60); textSize(20); textAlign(CENTER,TOP);
-  
-  canvas = createCanvas(window.outerWidth-15, window.outerHeight-122);
-  wordCount = calculateWordCount(promptString);
-  userInput = createInput('type here');
-  userInput.size(200, 30);
-  userInput.style("font-size: 25px");
-  userInput.mouseClicked(() => { //clear input field when clicked
-    userInput.value("");
-  });
-
-  userInput.mouseOver(() => { //bold text in the input field when mouse hovers over it
-    userInput.style("font-weight: bold");
-  });
-
-  userInput.mouseOut(() => { //remove bold text when mouse is no longer over the input field
-    userInput.style("font-weight: normal");
-  });
-  
-  startBtn = createButton("Start Game");
-  startBtn.mouseClicked(() => { //start the game and hide the button
-    gameState = "playing";
-    startBtn.hide();
-    userInput.value("type here");
-    userInput.input(checkInput); //everytime input is detected, checkInput() is called
-    startSound.play(); //tis i, the flying dutchman
-  });
-
-  celebrateBtn = createButton("Click to celebrate!"); //will appear after progress bar has been filled
-  celebrateBtn.hide();
-  celebrateBtn.mouseClicked(() => {
-    celebrateBtn.hide();
-    gameState = "celebrate";
-  });
-
-  homeBtn = createButton("Home");
-  homeBtn.mouseClicked(() => {
-    window.open("home.html", "_self");
-  });
-  homeBtn.position((width/2)-300, (height/2)+240)
-
-  skipBtn = createButton("Skip");
-  skipBtn.position((width/2),(height/2)+220)
-  skipBtn.mouseClicked(() => {
-    gameState = "instructions";
-    twoPac.stop();
-    skipBtn.hide();
-  });
-
-  currentPrompt = promptString;
-
-  promptP = createP("");
-  promptP
-    .style("letter-spacing: 20px")
-    .style("font-size: 40px")
-    .style("overflow: hidden")
-    .style("white-space: pre")
-    .style("font-family: 'Courier New', Courier, monospace")
-    .size(380,50)
-    .position((width/2)-180,(height/2)+35)
-    .html(currentPrompt)
-    .hide();
-  
-  for(var i = 0; i < funFactor; i++){ //fills array circleMovers with circleMovers to be used for moving objects
-    circleMovers.push(new circleMover());
-  }
-  growlingAnimation.frameDelay = 3;
-  storyAnimations.push(eatingAnimation, growlingAnimation, attackAnimation);
-  twoPac.setVolume(0.2);
-  twoPac.play();
-  twoPac.jump(17);
-} 
-
-
-
-let pic =0;
-let timeStarted = 0;
-let timings = [1,1,1,1];
-//let timings = [5,5,10,10];
-let firstTime=true;
-function draw() {
-  clear();
-  switch(gameState){
-    default:
-      startBtn.hide();
-      userInput.hide();
-      if(pic==0){
-        background(pinkDutch);
-      }
-      else if(pic-1 < storyAnimations.length){
-        storyAnimations[pic-1].draw((width/2)+20,(height/2));
-      }
-      else{
-        twoPac.stop();
-        skipBtn.hide();
-        gameState="instructions";
-      }
-      if((millis()-timeStarted) > (timings[pic]*1000)){
-        pic++;
-        timeStarted = millis();
-      }
-      break;
-
-    case "instructions":
-    //code for instruction screen
-      strokeWeight(10); stroke(0); fill(255);
-      background(255);
-      startBtn.show();
-      startBtn.position((width/2)-50,(height/2)+80);
-      userInput.show();
-      userInput.position((width/2)-100, (height/2)+240);
-      noStroke(); fill(0); textSize(50);
-      text("Instructions",width/2,(height/2)-220);
-      textSize(30);
-      text("Type the words that show up on screen.\n"+
-           "Press space whenever the prompt is blank\n"+
-           "Find out if you are a true homie.",width/2,(height/2)-80);
-      break;
-
-    case "playing":
-    //code for playing game
-      background(33, 96, 212);
-      nukeAnimation.draw(width/2,(height/2)-80);
-      fill(150,150,150);
-      rect((width/2)-200,(height/2)+60,400,50);
-      fill(249, 252, 61);
-      rect((width/2)-200, (height/2)+60, 45, 50);
-      
-      promptP.show();
-      promptP.html(currentPrompt);
-      fill(103, 168, 97); textSize(50); 
-      text("Typing with Dead Pirate Jack",(width/2),(height/2)-260);
-      fill(103, 168, 97); textSize(30);
-      text("Words Typed: "+wordsTyped,(width/2)-180,(height/2)+130);
-      fill(230, 79, 76);
-      text("Errors: "+errors,(width/2)+180,(height/2)+130);
-      let badX = map(errors, 0, 5, 0, width); 
-      let goodX = map(wordsTyped, 0, wordCount, 0, width); 
-      stroke(230, 79, 76); strokeWeight(25); 
-      line(0,(height/2)+180,badX,(height/2)+180); //error bar
-      stroke(103, 168, 97);
-      line(0,(height/2)+210,goodX,(height/2)+210); //progress bar
-      if(goodX >= width){ //if progress bar is full then get ready to celebrate 
-        celebrateBtn.show();
-        celebrateBtn.position((width/2)-50, (height/2)-100);
-        userInput.hide();
-        background(bg);
-        if(firstTime){
-          firstTime = false;
-          timeToComplete = (millis()-startTime)/1000;
+const game = {
+    wordsTyped: 0,
+    errors: 0,
+    startTime: 0,
+    srcArray: [
+        "https://cdn.discordapp.com/attachments/766444116913291277/779104744110817330/gangsta_pirates.jpg",
+        "https://cdn.discordapp.com/attachments/766444116913291277/779104793431113738/math_racist.jpg",
+        "https://cdn.discordapp.com/attachments/766444116913291277/779104837161058314/talkin_pirates.jpg",
+        "https://cdn.discordapp.com/attachments/766444116913291277/779104895302369310/pirates_fighting.jpg",
+        "https://cdn.discordapp.com/attachments/766444116913291277/779104949765668901/thinkin_pirate.jpg"],
+    array: [
+        `Gentlemen, stealing is very unbecoming of those of such noble birth as ourselves. `+
+        "Surely it would be better to politely ask these fine Spaniards for a share of the booty, "+
+        "perhaps in exchange for some of our booties. Come on lads, lets go make new friends. ",
+        //play sound here
+        //one pic per prompt
+        "Brothers and bildgerats, crewmen all, thar be some mighty fine booty of all manners on that thar ship. "+
+        "But we canne jus go up to a ship like that like eh buncha fightin cocks, not with a ship "+
+        "with so many cannons on et. We ‘ave to do it all stealthy an sly-like, like a fox stealin "+
+        "hens from a latrine. Wat we’re gonna do is a bodya picked men will go with me on "+
+        "te tha ship, we’s gonna…snuggle the officers of the ship until they take a uh, a "+
+        "long nappy-wappy, an then we’s gonna convince the resta the crew ta join us! "+
+        "Can anybody here speak Spanish? "
+    ],
+    text: "",
+    subLettersTyped: "",
+    firstInput: true,
+    userInput: document.getElementById("userInput"),
+    promptElement: document.getElementById("prompt"),
+    wordCount: 0,
+    volume: volume.value/10,
+    difficulty: 0,
+    calculateWordCount(){
+        let words = 0;
+        for(let letter of this.text){
+            if(letter == " ") words++;
         }
-        fill(255); noStroke();
-        text("You completed all prompts in "+ timeToComplete.toFixed(2) + " seconds", width/2,(height/2));
-      }
-      if(badX >= width){ //if error bar is full then game over loser
-        gameState = "game over"
-        nukeAnimation.stop();
-      }
-      break;
+        this.wordCount = this.text[this.text.length-1] == " " ? words : words + 1; //if space is last character of prompt, then return words, else return words plus 1
+    },
+    update(){
+        this.promptElement.innerHTML = this.text.slice(0,1) == "<" ? this.text :`<span id = 'specialLetter'>${this.text.slice(0,1)}</span>${this.text.slice(1)}`; //put the first letter in a span to change its color with .css
+        document.getElementById("wordsTyped").innerHTML = this.wordsTyped;
+        document.getElementById("errors").innerHTML = this.errors;
+        document.getElementById("errorBar").style.width = map(this.errors, 0, 5, 0, navbar.clientWidth)+"px";
+        document.getElementById("progressBar").style.width = map(this.wordsTyped, 0, this.wordCount, 0, navbar.clientWidth)+"px";
+        if(parseInt(document.getElementById("errorBar").style.width) >= navbar.clientWidth){
+            hide(playing);
+            show(lose);
+            let degrees = 0;
+            setInterval(() => {
+                document.getElementById("spinny").style.transform = `rotate(${degrees}deg)`;
+                degrees--;
+            }, 20);
+        }
+    },
+    reset(){
+        this.text = this.array[this.difficulty];
+        this.errors = 0;
+        this.wordsTyped = 0;
+        this.calculateWordCount();
+        this.subLettersTyped = "";
+        this.firstInput = true;
+        this.userInput.value = "type here";
+        this.update();
+        document.body.classList.remove("playing");
+        document.body.classList.remove("celebrate");
+        document.body.classList.add("instructions");
+        hide(playing, stats, celebrate, lose);
+        show(instructions);
+    }
+}
 
-    case "celebrate":
-    //code for celebration screen
-      userInput.show();
-      userInput.position((width/2)-80, (height/2)+240);
-      userInput.value("Click the circles!");
-      userInput.style("font-weight: bold");
-      background(bg);
-      for(var i = 0; i < circleMovers.length; i++){
-        circleMovers[i].updatePosition(); //calculate the XY coordinates of each vector
-        let mouseIsOverCircle = dist(mouseX, mouseY, circleMovers[i].position.x, circleMovers[i].position.y) < circleMovers[i].size;
+function hide(...elements){
+    for(let element of elements){
+        element.style.display = "none";
+    }
+}
+function show(...elements){
+    for(let element of elements){
+        element.style.display = "block";
+    }
+}
+
+window.onload = () => { //basically the setup function in p5
+    canvas.width = navbar.clientWidth; 
+    canvas.height =  window.innerHeight- navbar.clientHeight-10;
+    game.reset();
+    document.body.classList.add("instructions");
+}
+
+document.getElementById("settingsLink").onclick = () => show(document.getElementById("settings"));
+document.getElementsByClassName("close")[0].onclick = () => hide(document.getElementById("settings"));
+
+document.getElementById("startBtn").onclick = () => {
+    hide(instructions);
+    show(playing);
+    document.body.classList.remove("instructions");
+    document.body.classList.add("playing"); //adds class 'playing' to the body to change background color 
+    startSound.play();
+    img.src = game.srcArray[0];
+
+}
+
+document.getElementById("celebrateBtn").onclick = () => {
+    document.body.classList.remove("playing");
+    document.body.classList.add("celebrate");
+    hide(stats);
+    show(celebrate);
+    circleArray = [];
+    for(let i = 0; i < 100; i++){
+        circleArray.push(new Circle());
+    }
+    setInterval(drawCanvas, 10);//drawCanvas every 10 milliseconds
+}
+
+
+function drawCanvas(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height); //clear canvas
+    ctx.font = "50px Comic Sans MS";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText("You Rock!", canvas.width/2, canvas.height/2);
+    for(let circle of circleArray){
+        circle.updatePosition(3); //calculate the XY coordinates of each vector
+        let mouseIsOverCircle = dist(mouseX, mouseY, circle.position.x, circle.position.y) < circle.size;
         if(mouseIsOverCircle){ //then stop that circle and change color
-          circleMovers[i].velocity = 0;
-          circleMovers[i].color.r = Math.floor(random(0,256));
-          circleMovers[i].color.b = Math.floor(random(0,256));
-          circleMovers[i].color.g = Math.floor(random(0,256));
-          if(mouseIsPressed){
-            circleMovers = circleMovers.filter(mover => mover != circleMovers[i]); //add every mover besides the one that was clicked to circleMovers (remove the one that was clicked)
-          }
-        }
-        else circleMovers[i].velocity = circleMovers[i].startingVelocity;
-        if(circleMovers[i] != undefined){
-          fill(circleMovers[i].color.r, circleMovers[i].color.g, circleMovers[i].color.b);
-          circle(circleMovers[i].position.x, circleMovers[i].position.y, circleMovers[i].size); //draw a circle with XY coordinates of each vector
-        }
-      }
-      textSize(50); fill(255);
-      text("You rock!",width/2,height/2);
-      break;
-
-    case "game over":  
-    //code for lose screen
-      background(0);
-      fill(255); textSize(35);
-      text("You Lose",width/2,(height/2)+100);
-      userInput.hide();
-      spinnyAnimation.draw(width/2, (height/2)-100, rotation);
-      rotation++;
-  }
+            circle.velocity = 0;
+            circle.color.r = Math.floor(Math.random()*256);
+            circle.color.b = Math.floor(Math.random()*256);
+            circle.color.g = Math.floor(Math.random()*256);
+            if(mouseIsPressed){
+                circleArray = circleArray.filter(mover => mover != circle); //add every mover besides the one that was clicked to circleArray (remove the one that was clicked)
+            }
+        } 
+        else circle.velocity = circle.startingVelocity;
+        if(circle != undefined) circle.draw();
+    }
 }
-let rotation=0;
+
+game.userInput.onclick = () => game.userInput.value = "";
+game.userInput.onmouseover = () => game.userInput.style.fontWeight = "bold";
+game.userInput.onmouseout = () => game.userInput.style.fontWeight = "normal";
+game.userInput.oninput = () => {
+    if(game.firstInput){
+        game.firstInput = false; 
+        game.startTime = new Date();
+    }  
+    let lastInput = game.userInput.value[game.userInput.value.length - 1]; 
+    let nextLetter = game.text[0];
+    console.log(nextLetter);
+    if(lastInput == nextLetter){//if user typed correct character, delete first character of current prompt 
+        game.text = game.text.slice(1);
+        game.subLettersTyped += lastInput;
+        if(lastInput == " "){ //if space is pressed then a word has been typed correctly
+            game.wordsTyped++;
+            game.subLettersTyped = "";
+        }
+        else if(game.text.length == 0){ //you win
+            hide(playing);
+            show(stats);
+            document.getElementById("timeToComplete").innerHTML = ((new Date() - game.startTime)/1000).toFixed(2) + " ";
+        }
+    }
+    else { //if wrong input then reset progress bar, prompt, userInput and play the fail sound
+        if(failSound.ended || failSound.currentTime == 0){
+            game.errors++;
+            failSound.play();
+        }
+        game.text = game.subLettersTyped + game.text;
+        game.subLettersTyped = "";
+        game.userInput.value = "";
+    }
+    game.update();
+}
+
+volumeSlider.onchange = () =>{
+    game.volume = volumeSlider.value/100;
+    startSound.volume = game.volume;
+    failSound.volume = game.volume;
+    failSound.play();
+    document.getElementById("volume").innerHTML = volumeSlider.value;
+}
+
+sizeSlider.onchange = () => {
+    document.getElementById("size").innerHTML = sizeSlider.value;
+    for(let circle of circleArray){
+        circle.size = Math.floor(sizeSlider.value/5);
+    }
+}
+
+speedSlider.onchange = () => {
+    document.getElementById("speed").innerHTML = speedSlider.value;
+    for(let circle of circleArray){
+        circle.startingVelocity = circle.startingVelocity.normalize().mult(speedSlider.value/10);
+    }
+}
+
+diffDropdown.onchange = () => {
+    game.difficulty = (function(){
+        switch(diffDropdown.value){
+            case "easy":
+                return 0;
+            case "normal":
+                return 1;
+            case "extreme":
+                return 2;
+        }
+    })();
+    game.reset();
+};
+
+function map(value, a, b, c, d){
+    value = (value - a) / (b - a); // first map value from (a..b) to (0..1)
+    return c + value * (d - c); // then map it from (0..1) to (c..d) and return it
+}
+
+function dist(x1, y1, x2, y2){
+    return Math.sqrt((x1 - x2)**2 + (y1 - y2)**2);
+}
+
+class Circle { //represents a circle
+    constructor(){
+        this.startingVelocity = (new Vector()).randomVector().normalize().mult(3);//random direction with speed of 3
+        this.position = new Vector(canvas.width/2, canvas.height/2); //starting position is center of canvas
+        this.velocity = this.startingVelocity //calculate random inital starting velocity
+        this.size = 20;
+        this.color = {
+            r: 0,
+            g: 0,
+            b: 0,
+        }
+    }
+    updatePosition(){ //calculate the new position after moving in the direction of the random vector
+        this.position = this.position.add(this.velocity); //move the object by vector
+        let positionX = this.position.x; 
+        let positionY = this.position.y;
+        if((positionX > canvas.width-10) || (positionX < 10)) {
+            if(typeof this.velocity.x == "number"){ //edge cases can cause a type error in the next line because the velocity becomes NAN
+                this.velocity.x *= -1;
+            }
+        }
+        if((positionY > canvas.height-10) || (positionY < 10)) {
+            if(typeof this.velocity.y == "number"){
+                this.velocity.y *= -1;
+            }
+        }
+    }
+    draw(){
+        ctx.beginPath();
+        ctx.arc(this.position.x, this.position.y, this.size/2, 0, 2*Math.PI);
+        ctx.stroke();
+        ctx.fillStyle = `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
+        ctx.fill();
+    }
+}
+
+class Vector { //handles all vector math
+    constructor(x, y){
+        this.x = x || 0;
+        this.y = y || 0;
+    }
+    add(v){
+        if (v instanceof Vector) return new Vector(this.x + v.x, this.y + v.y);
+        else return new Vector(this.x + v, this.y + v);
+    }
+    mult(v){
+        if (v instanceof Vector) return new Vector(this.x * v.x, this.y * v.y);
+        else return new Vector(this.x * v, this.y * v);
+    }
+    divide(v){
+        if (v instanceof Vector) return new Vector(this.x / v.x, this.y / v.y);
+        else return new Vector(this.x / v, this.y / v);
+    }
+    dot(v){
+        return this.x * v.x + this.y * v.y;
+    }
+    length(){
+        return Math.sqrt(this.dot(this));
+    }
+    fromAngles(theta, phi){
+        return new Vector(Math.cos(theta) * Math.cos(phi), Math.sin(phi));
+    }
+    randomVector(){
+        return this.fromAngles(Math.random() * Math.PI * 2, Math.asin(Math.random() * 2 - 1));
+    }
+    normalize(){
+        return this.divide(this.length());
+    }
+}
