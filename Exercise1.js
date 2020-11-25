@@ -1,18 +1,28 @@
 let trans = 1000;
-let ins1,ins2,img,vid;
+let ins1,ins2,img,bg2,vh,vid,vid2;
 let ins1IsPlaying = false;
 let ins2IsPlaying = false;
+let vaultHandleX, vaultHandleY;
 let extraCanvas;
 let button;
 let compliments;
 let inAnyBoundary = false;
 let visitedboundaries = [];
 let boundaryPoints = [];
- 
+let door1, door2;
+let currentDoor = 0;
+class Point{
+    constructor(x, y){
+        this.x = x || 0;
+        this.y = y || 0;
+    }
+}
 function preload(){
-    ins1 = loadSound('assets/sounds/Click.mp3');
-    ins2 = loadSound('assets/sounds/Twist.mp3');
-    img = loadImage('assets/pics/House.png');
+    ins1 = loadSound('assets/Click.mp3');
+    ins2 = loadSound('assets/Twist.mp3');
+    img = loadImage('assets/House.png');
+    bg2 = loadImage('assets/bg2.png');
+    vh = loadImage('assets/vaulthandle.png');
 }
 function setup() {
     homeBtn = createButton("Home");
@@ -25,34 +35,126 @@ function setup() {
         buttonhide();
         ins1.play();
     });
-    vid = createVideo(['assets/pics/Open.mp4']);
+    door1 = [
+        new Point((width-15)/2-72, (height-20)/2+81), 
+        new Point((width-15)/2-56, (height-20)/2+77), 
+        new Point((width-15)/2-42, (height-20)/2+72),
+        new Point((width-15)/2-32, (height-20)/2+64),
+        new Point((width-15)/2-25, (height-20)/2+51),
+        new Point((width-15)/2-18, (height-20)/2+37),
+    ];
+    door2 = [
+        new Point(698, 286), 
+        new Point(698, 298), 
+        new Point(694, 305), 
+        new Point(690, 314), 
+        new Point(686, 323), 
+        new Point(676, 333), 
+        new Point(667, 342), 
+        new Point(657, 345), 
+        new Point(642, 348), 
+        new Point(625, 346), 
+        new Point(612, 338), 
+        new Point(602, 331), 
+        new Point(594, 322), 
+        new Point(588, 310), 
+        new Point(583, 298), 
+        new Point(581, 285), 
+        new Point(580, 272), 
+        new Point(586, 261), 
+        new Point(592, 250), 
+        new Point(600, 240), 
+        new Point(610, 232), 
+        new Point(626, 226), 
+        new Point(646, 227), 
+        new Point(656, 228), 
+        new Point(666, 232), 
+        new Point(676, 240), 
+        new Point(682, 245), 
+        new Point(688, 251), 
+        new Point(693, 260), 
+        new Point(700, 274), 
+        new Point(700, 285), 
+    ];
+    vid = createVideo(['assets/Open.mp4']);
     vid.position(0,0);
     vid.size((windowWidth-15), (windowHeight-80));
     vid.hide();
-    boundaryPoints.push({x: (width-15)/2-72, y: (height-20)/2+81})
-    boundaryPoints.push({x: (width-15)/2-56, y: (height-20)/2+77})
-    boundaryPoints.push({x: (width-15)/2-42, y: (height-20)/2+72})
-    boundaryPoints.push({x: (width-15)/2-32, y: (height-20)/2+64})
-    boundaryPoints.push({x: (width-15)/2-25, y: (height-20)/2+51})
-    boundaryPoints.push({x: (width-15)/2-18, y: (height-20)/2+37})
+    vid.mouseClicked(()=>{
+        vid.hide();
+        compliments.hide();
+    });
+    vid2 = createVideo(['assets/vaultdoor.mp4']);
+    vid2.position(0,0);
+    vid2.size((windowWidth-15), (windowHeight-80));
+    vid2.hide();
+    vid2.mouseClicked(()=>{
+        vid2.hide();
+    });
+    boundaryPoints.push(door1, door2);
+    console.log(boundaryPoints[0][0])
+}
+function isInBounds(size){
+    for(let i = 0; i < boundaryPoints[currentDoor].length; i++){ 
+        let boundary = { //could change to circles but squares will make the boundaries overlap more
+          left: boundaryPoints[currentDoor][i].x - size,
+          right: boundaryPoints[currentDoor][i].x + size,
+          top: boundaryPoints[currentDoor][i].y - size,
+          bottom: boundaryPoints[currentDoor][i].y + size
+        }
+        //rect(boundary.left, boundary.top, size*2); //for testing purposes
+        if(mouseX > boundary.left && mouseX < boundary.right && mouseY > boundary.top && mouseY < boundary.bottom){
+            if (!visitedboundaries.includes(boundaryPoints[currentDoor][i])){
+                visitedboundaries.push(boundaryPoints[currentDoor][i]);
+                console.log("In Bounds");
+            }
+            return true;
+        }
+    }
+    return false;
 }
 function draw() {
-    drawBackground();
+    drawBackground(currentDoor);
     let handleX = (width-15)/2 - 77;
     let handleY = (height-20)/2 + 28;
     let circleX = (width-15)/2 - 20;
     let circleY = (height-20)/2 + 36;
-    let clickRange = dist(mouseX, mouseY, circleX, circleY) < 15;
+    vaultHandleX = (width-15)/2+15; //(width-15)/2+75;
+    vaultHandleY = (height-20)/2+49;
  
-    if(mouseIsPressed && checkAllBoundaries(10)){ //if mouse pressed in bounds then rotate handle
-        rotateHandle(handleX, handleY);
-        rotateCircle(circleX, circleY);
+    if(mouseIsPressed && isInBounds(10)){ //if mouse pressed in bounds then rotate handle
+        if(currentDoor == 0){
+            rotateHandle(handleX, handleY);
+            rotateCircle(circleX, circleY);
+            if(visitedboundaries.length == boundaryPoints[currentDoor].length){
+                trans = 0;
+                vid.show();
+                vid.loop();
+                vid.volume(0);
+                console.log("handle was actually turned");
+                currentDoor++;
+                visitedboundaries = [];
+                buttonhide();
+                success();
+            }
+        }
+        if(currentDoor == 1){
+            rotateVaultHandle(vaultHandleX, vaultHandleY);
+            if(visitedboundaries.length == boundaryPoints[currentDoor].length){
+                vid2.show();
+                vid2.loop();
+                vid2.volume(0);
+                console.log("handle was actually turned");
+                currentDoor++;
+                visitedboundaries = [];
+            }
+        }
         ins1.stop();
         if(ins2.isPlaying() == false && !ins2IsPlaying){
             ins2.play();
             ins2IsPlaying = true;
         }
-    }else { //just draw rectangle
+    }else if(currentDoor == 0){ //just draw rectangle
         fill(255,197,4,trans);
         rect(handleX,handleY,65,17);
         stroke(255,0,0,trans);
@@ -62,45 +164,16 @@ function draw() {
         stroke('black');
         strokeWeight(0.5);
     }
+    else if(currentDoor == 1){
+        noStroke();
+        fill('red');
+        circle((width-15)/2+75,(height-20)/2+49,15);
+        console.log(currentDoor);
+    }
+
 }
-function checkAllBoundaries(size){
-    for(let i = 0; i < boundaryPoints.length; i++){
-        let boundary = {
-          left: boundaryPoints[i].x - size,
-          right: boundaryPoints[i].x + size,
-          top: boundaryPoints[i].y - size,
-          bottom: boundaryPoints[i].y + size
-        }
-        //rect(boundary.left, boundary.top, size*2); //for testing purposes
-        if(mouseX > boundary.left && mouseX < boundary.right && mouseY > boundary.top && mouseY < boundary.bottom){
-            inAnyBoundary = true;
-            console.log(inAnyBoundary);
-		return true;
-            if (!visitedboundaries.includes(boundaryPoints[i])){
-                visitedboundaries.push(boundaryPoints[i]);
-                console.log("In Bounds");
-            }
-            if (visitedboundaries.length >= boundaryPoints.length){ 
-                visitedboundaries = [];
-            }
-            if(!inAnyBoundary){ 
-                    clear();
-			return false;
-            }    
-        }
-        }    
-  }
 function rotateHandle(posX, posY){
     let angle = Math.atan2(mouseY-posY, mouseX-posX);
-    if(angle >= 1.3){
-        trans = 0;
-        vid.show();
-        vid.loop();
-        vid.volume(0);
-        console.log("handle turned");
-        buttonhide();
-        success();
-    }
     translate((width-15)/2-77,(height-20)/2+28);
     rotate(angle);
     fill(255,197,4,trans);
@@ -117,14 +190,34 @@ function rotateCircle(posX, posY){
     stroke(0,0,0,trans);
     strokeWeight(0.5);
 }
-function drawBackground(){
-    stroke(0,0,0,trans);
-    background(222,184,135);
-    image(img,-75,-390);
-    fill(255,197,4,trans);
-    rect((width-15)/2-90,(height-20)/2,30,80,10);
-    fill(192,192,192,trans);
-    circle((width-15)/2-75,(height-20)/2+35,30);
+function rotateVaultHandle(posX, posY){
+    let angle = Math.atan2(mouseY-posY, mouseX-posX);
+    //rect(mouseX-posX, mouseY-posY, 20, 20);
+    translate((width-15)/2+15,(height-20)/2+49);
+    rotate(angle);
+    noStroke();
+    fill('red');
+    circle(60,0,15);
+}
+function drawBackground(door){
+    switch(door){
+        case 0:
+            stroke(0,0,0,trans);
+            background(222,184,135);
+            image(img,-75,-390);
+            fill(255,197,4,trans);
+            rect((width-15)/2-90,(height-20)/2,30,80,10);
+            fill(192,192,192,trans);
+            circle((width-15)/2-75,(height-20)/2+35,30);
+            break;
+        case 1:
+            image(bg2, 0, 0, windowWidth, windowHeight);
+            stroke('grey');
+            strokeWeight(15);
+            fill(0,0,0,0);
+            circle((width-15)/2+15,(height-20)/2+49, 120);
+            break;
+    }
 }
 function success(){
     compliments = createElement('h2', 'Great Job!');
@@ -135,4 +228,13 @@ function success(){
 function buttonhide(){
     button.hide();
 }
-
+let result = "";
+function mouseClicked(){
+    result += `new Point(${mouseX}, ${mouseY}), \n`
+}
+function doubleClicked(){
+    result = "";
+}
+function mouseWheel(){
+    console.log(result);
+}
