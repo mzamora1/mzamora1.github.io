@@ -18,11 +18,11 @@ class Point{
     }
 }
 function preload(){
-    ins1 = loadSound('assets/Click.mp3');
-    ins2 = loadSound('assets/Twist.mp3');
-    img = loadImage('assets/House.png');
-    bg2 = loadImage('assets/bg2.png');
-    vh = loadImage('assets/vaulthandle.png');
+    ins1 = loadSound('assets/sounds/Click.mp3');
+    ins2 = loadSound('assets/sounds/Twist.mp3');
+    img = loadImage('assets/pics/House.png');
+    bg2 = loadImage('assets/pics/bg2.png');
+    vh = loadImage('assets/pics/vaulthandle.png');
 }
 function setup() {
     homeBtn = createButton("Home");
