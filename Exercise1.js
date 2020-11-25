@@ -10,9 +10,9 @@ let visitedboundaries = [];
 let boundaryPoints = [];
  
 function preload(){
-    ins1 = loadSound('assets/Click.mp3');
-    ins2 = loadSound('assets/Twist.mp3');
-    img = loadImage('assets/House.png');
+    ins1 = loadSound('assets/sounds/Click.mp3');
+    ins2 = loadSound('assets/sounds/Twist.mp3');
+    img = loadImage('assets/pics/House.png');
 }
 function setup() {
     homeBtn = createButton("Home");
@@ -25,7 +25,7 @@ function setup() {
         buttonhide();
         ins1.play();
     });
-    vid = createVideo(['assets/Open.mp4']);
+    vid = createVideo(['assets/animations/Open.mp4']);
     vid.position(0,0);
     vid.size((windowWidth-15), (windowHeight-80));
     vid.hide();
