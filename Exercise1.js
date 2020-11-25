@@ -25,7 +25,7 @@ function setup() {
         buttonhide();
         ins1.play();
     });
-    vid = createVideo(['assets/animations/Open.mp4']);
+    vid = createVideo(['assets/pics/Open.mp4']);
     vid.position(0,0);
     vid.size((windowWidth-15), (windowHeight-80));
     vid.hide();
