@@ -75,7 +75,7 @@ function setup() {
         new Point(700, 274), 
         new Point(700, 285), 
     ];
-    vid = createVideo(['assets/Open.mp4']);
+    vid = createVideo(['assets/pics/Open.mp4']);
     vid.position(0,0);
     vid.size((windowWidth-15), (windowHeight-80));
     vid.hide();
@@ -83,7 +83,7 @@ function setup() {
         vid.hide();
         compliments.hide();
     });
-    vid2 = createVideo(['assets/vaultdoor.mp4']);
+    vid2 = createVideo(['assets/pics/vaultdoor.mp4']);
     vid2.position(0,0);
     vid2.size((windowWidth-15), (windowHeight-80));
     vid2.hide();
