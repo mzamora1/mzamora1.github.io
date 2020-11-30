@@ -22,7 +22,6 @@ function preload(){
     ins2 = loadSound('assets/sounds/Twist.mp3');
     img = loadImage('assets/pics/House.png');
     bg2 = loadImage('assets/pics/bg2.png');
-    vh = loadImage('assets/pics/vaulthandle.png');
 }
 function setup() {
     homeBtn = createButton("Home");
