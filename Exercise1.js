@@ -1,5 +1,5 @@
 let trans = 1000;
-let ins1,ins2,img,bg2,vh,vid,vid2;
+let ins1,ins2,img,bg2,vh,vid,vid2,fail;
 let ins1IsPlaying = false;
 let ins2IsPlaying = false;
 let vaultHandleX, vaultHandleY;
@@ -22,6 +22,7 @@ function preload(){
     ins2 = loadSound('assets/sounds/Twist.mp3');
     img = loadImage('assets/pics/House.png');
     bg2 = loadImage('assets/pics/bg2.png');
+    fail = loadSound("https://cdn.discordapp.com/attachments/766444116913291277/783810599921516544/you_know.mp3");
 }
 function setup() {
     homeBtn = createButton("Home");
@@ -168,6 +169,11 @@ function draw() {
         fill('red');
         circle((width-15)/2+75,(height-20)/2+49,15);
         console.log(currentDoor);
+    }
+    if(mouseIsPressed & !isInBounds(11)){
+        if(fail.isPlaying()){
+            fail.play();
+        }
     }
 
 }
