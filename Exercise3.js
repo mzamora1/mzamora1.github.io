@@ -4,20 +4,21 @@ var gif_createhouse, gif_loadhouse;
 let instruc, end;
 
 function preload(){
-  gif_loadheart = loadImage('assets/gif_heart.gif');
-  gif_loadpent = loadImage('assets/gif_pent.gif');
-  gif_loadhouse = loadImage('assets/gif_house.gif');
-  chalk = loadImage('assets/chalk.jpg');
-  end = loadImage('assets/end.jpg');
-  reset_snd = loadSound('assets/reset_snd.mp3');
-  yay = loadSound('assets/yay.mp3');
-  music = loadSound('assets/music.mp3');
-  burger = loadSound('assets/burger.mp3');
+  gif_loadheart = loadImage('assets/spinnyAnimation/gif_heart.gif');
+  gif_loadpent = loadImage('assets/spinnyAnimation/gif_pent.gif');
+  gif_loadhouse = loadImage('assets/spinnyAnimation/gif_house.gif');
+  chalk = loadImage('assets/pics/chalk.jpg');
+  end = loadImage('assets/pics/end.jpg');
+  reset_snd = loadSound('assets/sounds/reset_snd.mp3');
+  yay = loadSound('assets/sounds/yay.mp3');
+  music = loadSound('assets/sounds/music.mp3');
+  burger = loadSound('assets/sounds/burger.mp3');
+  duck = loadSound('assets/sounds/duck.mp3');
 }
 
 function intro(){
   background(chalk);
-  instruc = createImg('assets/intro.jpg','instructions');
+  instruc = createImg('assets/pics/intro.jpg','instructions');
   instruc.position(0,0);
   instruc.mouseClicked(()=>{
     instruc.hide();
@@ -27,17 +28,16 @@ function intro(){
 
 function setup() {
   createCanvas(400, 400);
-  //music.loop();
   drawingArray = heartArray;
   background(chalk);
   intro();
-  gif_createheart = createImg('assets/gif_heart.gif','heart');
+  gif_createheart = createImg('assets/spinnyAnimation/gif_heart.gif','heart');
   gif_createheart.style("position:absolute");
   gif_createheart.hide();
-  gif_createpent = createImg('assets/gif_pent.gif','pent');
+  gif_createpent = createImg('assets/spinnyAnimation/gif_pent.gif','pent');
   gif_createpent.style("position:absolute");
   gif_createpent.hide();
-  gif_createhouse = createImg('assets/gif_house.gif','house');
+  gif_createhouse = createImg('assets/spinnyAnimation/gif_house.gif','house');
   gif_createhouse.style("position:absolute");
   gif_createhouse.hide();
 }
@@ -264,6 +264,7 @@ function star_animation(){
   drawingArray = blankArray;
   text_star = text_next;
   image(gif_loadpent, 0, 0);
+  duck.play();
   gif_createpent.position(50,25);
   gif_createpent.show();
   gif_createpent.mouseClicked(()=>{
@@ -347,18 +348,11 @@ function checkAllBoundaries(size){
           } else if (drawingArray ==houseArray){
             yay.play();
             house_animation();
-          }
-
-    if(!inAnyBoundary){ 
-      //reset_snd.play();
-      clear();
-      background(chalk);
+          } 
     }
   
-    if(reset_snd.isPlaying){
-      //!reset_snd.play();
-    }
+  if(!inAnyBoundary){ 
+      clear();
+      background(chalk);
   }
 }
-
-
