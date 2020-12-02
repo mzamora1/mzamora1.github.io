@@ -241,9 +241,9 @@ function setup() {
   instruc.mouseClicked(() => instruc.hide());
 
   completionGifs.forEach((obj) => {
+    obj.sound.play();
     centerElement(obj.gif_create);
     obj.gif_create.hide();
-    obj.sound.play();
     obj.gif_create.mouseClicked(function() {
       this.hide();
       clear(); background(chalk);
