@@ -76,7 +76,7 @@ function setup() {
         new Point(688, 251), 
         new Point(693, 260), 
         new Point(700, 274), 
-        new Point(700, 285), 
+        //new Point(700, 285), 
     ];
     vid = createVideo(['assets/pics/Open.mp4']);
     vid.position(0,0);
@@ -112,6 +112,10 @@ function isInBounds(size){
             }
             return true;
         }
+    }
+    visitedBoundaries = [];
+    if(!fail.isPlaying()){
+        fail.play();   
     }
     return false;
 }
@@ -172,11 +176,6 @@ function draw() {
         fill('red');
         circle((width-15)/2+75,(height-20)/2+49,15);
         console.log(currentDoor);
-    }
-    if(mouseIsPressed & !isInBounds(11)){
-        if(!fail.isPlaying()){
-            fail.play();
-        }
     }
 
 }
