@@ -9,7 +9,7 @@
     <body>
 
         <div class="navbar" id="nav">
-            <a href="exSplash.html">Home</a>
+            <a href="home.html">Home</a>
             <a href="#" id="settingsLink" >Settings</a>
             <div class="dropdown">
               <button class="dropbtn">Dropdown <i class="fa fa-caret-down"></i> </button>
@@ -25,9 +25,13 @@
         <div id="instructions">
             <h1>Instructions</h1>
             <h2>Type the words that show up on screen</h2>
+            <h2>You are allowed <span id="mistakes" style="text-decoration: underline;">5</span> mistakes per round</h2>
             <h2>Press space whenever the prompt is blank</h2>
-            <h2>Find out if you are a true homie</h2>
             <button id="startBtn">Start Game</button>
+            <h2>OR</h2>
+            <label for="inputInstruc" style="font-size: 30px;">Enter anything to type about: </label>
+            <input type="text" value="press enter when complete" class="text-input promptInput" id="inputInstruc" style="width: 250px; height: 30px; font-size: 20px; top: 0px;">
+            <h3>Enter the title of a wikipedia page for most accurate result</h3>
         </div>
 
         <div id="playing">
