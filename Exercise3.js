@@ -31,8 +31,8 @@ function preload(){
   chalk = loadImage('assets/pics/chalk.jpg');
   end = loadImage('assets/pics/end.JPG');
   yay = loadSound('assets/sounds/yay.mp3');
-  burger = loudSound('assets/sounds/burger.mp3');
-  duck = loudSound('assets/sounds/duck.mp3')
+  burger = loadSound('assets/sounds/burger.mp3');
+  duck = loadSound('assets/sounds/duck.mp3')
   instruc = createImg('assets/pics/intro.JPG','instructions');
   gif_createheart = createImg('assets/spinnyAnimation/gif_heart.gif','heart');
   gif_createpent = createImg('assets/spinnyAnimation/gif_pent.gif','pent');
