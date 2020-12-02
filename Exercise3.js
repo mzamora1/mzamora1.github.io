@@ -1,47 +1,81 @@
-let drawingArray = []
-let visitedboundaries = [];
+var gif_createheart, gif_loadheart;
+var gif_createpent, gif_loadpent;
+var gif_createhouse, gif_loadhouse;
+let instruc, end;
+
+function preload(){
+  gif_loadheart = loadImage('assets/gif_heart.gif');
+  gif_loadpent = loadImage('assets/gif_pent.gif');
+  gif_loadhouse = loadImage('assets/gif_house.gif');
+  chalk = loadImage('assets/chalk.jpg');
+  end = loadImage('assets/end.jpg');
+  reset_snd = loadSound('assets/reset_snd.mp3');
+  yay = loadSound('assets/yay.mp3');
+  music = loadSound('assets/music.mp3');
+  burger = loadSound('assets/burger.mp3');
+}
+
+function intro(){
+  background(chalk);
+  instruc = createImg('assets/intro.jpg','instructions');
+  instruc.position(0,0);
+  instruc.mouseClicked(()=>{
+    instruc.hide();
+  });
+  drawingArray = heartArray
+}
 
 function setup() {
   createCanvas(400, 400);
+  //music.loop();
   drawingArray = heartArray;
-  chalk = loadImage('assets/pics/chalk.jpg', img => {image(img, 0, 0)});
-  laugh = loadSound('assets/sounds/laugh.mp3');
-  yay = loadSound('assets/sounds/yay.mp3');
-  // flying_heart = loadImage('assets/flying_heart.gif');
   background(chalk);
+  intro();
+  gif_createheart = createImg('assets/gif_heart.gif','heart');
+  gif_createheart.style("position:absolute");
+  gif_createheart.hide();
+  gif_createpent = createImg('assets/gif_pent.gif','pent');
+  gif_createpent.style("position:absolute");
+  gif_createpent.hide();
+  gif_createhouse = createImg('assets/gif_house.gif','house');
+  gif_createhouse.style("position:absolute");
+  gif_createhouse.hide();
 }
 
 let text_heart = heart_text_place;
 function heart_text_place(){
   textSize(32);
   text('HEART',250,320);
-  fill(245)
+  fill('white');
 }
 
 let text_star = star_text_place;
 function star_text_place(){
   textSize(32);
   text('Pentagram',200,320);
-  fill(245)
+  fill(245);
 }
 
 let text_house = house_text_place;
 function house_text_place(){
   textSize(32);
   text('House',260,320);
-  fill(245)
+  fill(245);
 }
 
-// let animation = flying_heart
-// function flying_heart(){
-//   loadImage('assets/flying_heart.gif');
-//   var n = 0
-//   n++;
-//   image(flying_heart,n,height/2)
-//   if (n > width){
-//     n = -100
-//   }
-// }
+let text_next = next_text_place;
+function next_text_place(){
+  textSize(10);
+  text('Click on the GIF to Continue',175,350);
+  fill(245);
+}  
+
+let text_empty = empty_text_place;
+function empty_text_place(){
+  textSize(1);
+  text('BABABuoi',175,350);
+  fill('white');
+}
 
 let heartArray = [];
   heartArray.push({x: 271, y:91}); 
@@ -74,6 +108,7 @@ let heartArray = [];
   heartArray.push({x: 251, y:181}); 
   heartArray.push({x: 261, y:190}); 
   
+
 
 let starArray = [];
   starArray.push({x: 194, y:52}); 
@@ -204,14 +239,66 @@ let houseArray = [];
   houseArray.push({x: 193, y:179}); 
   houseArray.push({x: 194, y:191}); 
 
+let drawingArray = []
+let blankArray = []
+let visitedboundaries = [];
 
-function draw() {
-  
+function heart_animation(){
+  background(0);
+  drawingArray = blankArray;
+  text_heart = text_next;
+  image(gif_loadheart, 0, 0);
+  burger.play();
+  gif_createheart.position(50,25);
+  gif_createheart.show();
+  gif_createheart.mouseClicked(()=>{
+    drawingArray=starArray;
+    text_next = text_empty;
+    text_star();
+    gif_createheart.hide();
+  });
+}
+
+function star_animation(){
+  background(0);
+  drawingArray = blankArray;
+  text_star = text_next;
+  image(gif_loadpent, 0, 0);
+  gif_createpent.position(50,25);
+  gif_createpent.show();
+  gif_createpent.mouseClicked(()=>{
+    drawingArray=houseArray;
+    text_next = text_empty;
+    text_house();
+    gif_createpent.hide();
+  });
+}
+
+function house_animation(){
+  background(0);
+  drawingArray = blankArray;
+  text_house = text_next;
+  image(gif_loadhouse, 0, 0);
+  gif_createhouse.position(50,25);
+  gif_createhouse.show();
+  gif_createhouse.mouseClicked(()=>{
+    //drawingArray=houseArray; <= if more drawings are added.
+    text_next = text_empty;
+    text_house();
+    gif_createhouse.hide();
+  image(end,50,150);
+  });
+}
+
+function mouseClicked(){
+
+}
+
+function draw() { 
   text_heart();
-  // animation();
-  
-  for(let i = 0; i < drawingArray.length; i++){
-    circle(drawingArray[i].x, drawingArray[i].y, 4);
+
+  for(let i = 0; i < (drawingArray).length; i++){
+    circle((drawingArray[i]).x, (drawingArray[i]).y, 4);
   }
   
   stroke(200);
@@ -219,8 +306,8 @@ function draw() {
     line(mouseX, mouseY, pmouseX, pmouseY);
     checkAllBoundaries(14);
   }
-
 }
+
 
 function checkAllBoundaries(size){
   
@@ -228,10 +315,10 @@ function checkAllBoundaries(size){
   
     for(let i = 0; i < drawingArray.length; i++){
         let boundary = {
-            left: drawingArray[i].x - size,
-            right: drawingArray[i].x + size,
-            top: drawingArray[i].y - size,
-            bottom: drawingArray[i].y + size
+            left: (drawingArray[i]).x - size,
+            right: (drawingArray[i]).x + size,
+            top: (drawingArray[i]).y - size,
+            bottom: (drawingArray[i]).y + size
         }
       
         //rect(boundary.left, boundary.top, size*2); //for testing purposes
@@ -240,33 +327,38 @@ function checkAllBoundaries(size){
       inAnyBoundary = true;
       if (!visitedboundaries.includes(drawingArray[i])){
             visitedboundaries.push(drawingArray[i]);
-            console.log("In Bounds");
+            //console.log("In Bounds");
         }
       }
     }
     
     if (visitedboundaries.length >= drawingArray.length){
           visitedboundaries = [];
-          drawingArray = starArray;
-          text_heart = text_star;
-          yay.play();
-          starArray = houseArray;
-          text_star = text_house;
-          yay.play();
-          
-          console.log("lo hizimos!");
-    }
+          clear();
+          background(chalk);
+      
+          if (drawingArray == heartArray){
+            yay.play();
+            heart_animation();
+            text_star();
+          } else if (drawingArray == starArray){
+            yay.play();
+            star_animation();
+          } else if (drawingArray ==houseArray){
+            yay.play();
+            house_animation();
+          }
 
     if(!inAnyBoundary){ 
-      laugh.play();
+      //reset_snd.play();
       clear();
       background(chalk);
     }
   
-    if (yay.play == true){
-      !laugh.play();
+    if(reset_snd.isPlaying){
+      //!reset_snd.play();
     }
-    
+  }
 }
 
 
