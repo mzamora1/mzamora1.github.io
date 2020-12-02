@@ -22,7 +22,7 @@ function preload(){
     ins2 = loadSound('assets/sounds/Twist.mp3');
     img = loadImage('assets/pics/House.png');
     bg2 = loadImage('assets/pics/bg2.png');
-    fail = loadSound("https://cdn.discordapp.com/attachments/766444116913291277/783810599921516544/you_know.mp3");
+    fail = loadSound("assets/sounds/sweet_nothings.mp3");
 }
 function setup() {
     homeBtn = createButton("Home");
