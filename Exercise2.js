@@ -90,18 +90,18 @@ class Game{ //represents the typing game
             "https://cdn.discordapp.com/attachments/766444116913291277/779104949765668901/thinkin_pirate.jpg"
         ];
         this.array =  toArray(text) || [ //stores all the prompt text
-            "Gentlemen, stealing is very ",//unbecoming of those of such noble birth as ourselves. "+
-            // "Surely it would be better to politely ask these fine Spaniards for a share of the booty, "+
-            // "perhaps in exchange for some of our booties. Come on lads, lets go make new friends. ",
+            "Gentlemen, stealing is very unbecoming of those of such noble birth as ourselves. ",
+            "Surely it would be better to politely ask these fine Spaniards for a share of the booty, ",
+            "perhaps in exchange for some of our booties. Come on lads, lets go make new friends. ",
             // //play sound here
             // //one pic per prompt
              "Brothers and bildgerats, crewmen all, thar be some mighty fine booty of all manners on that thar ship. ",
-            // "But we canne jus go up to a ship like that like eh buncha fightin cocks, not with a ship "+
-            // "with so many cannons on et. We ‘ave to do it all stealthy an sly-like, like a fox stealin "+
-            // "hens from a latrine. Wat we’re gonna do is a bodya picked men will go with me on "+
-            // "te tha ship, we’s gonna…snuggle the officers of the ship until they take a uh, a "+
-            // "long nappy-wappy, an then we’s gonna convince the resta the crew ta join us! "+
-            // "Can anybody here speak Spanish? "
+            "But we canne jus go up to a ship like that like eh buncha fightin cocks, not with a ship ",
+            "with so many cannons on et. We ‘ave to do it all stealthy an sly-like, like a fox stealin ",
+            "hens from a latrine. Wat we’re gonna do is a bodya picked men will go with me on ",
+            "te tha ship, we’s gonna…snuggle the officers of the ship until they take a uh, a ",
+            "long nappy-wappy, an then we’s gonna convince the resta the crew ta join us! ",
+            "Can anybody here speak Spanish? "
         ];
         this.difficulty = calcDiff();
         this.stage = 0;
