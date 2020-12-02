@@ -243,8 +243,8 @@ function setup() {
   completionGifs.forEach((obj) => {
     centerElement(obj.gif_create);
     obj.gif_create.hide();
+    obj.sound.play();
     obj.gif_create.mouseClicked(function() {
-      obj.sound.play();
       this.hide();
       clear(); background(chalk);
     });
