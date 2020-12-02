@@ -29,7 +29,8 @@ function preload(){
 function setup() {
     createCanvas((windowWidth-15), (windowHeight-80));
     button = createButton("Instruction");
-    button.position(width/2, height/2+150);
+    button.size(100, 20);
+    button.position(width/2 - button.size().width/2, height/2+150);
     button.mouseClicked(() => {
         buttonhide();
         ins1.play();
