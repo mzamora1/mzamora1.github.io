@@ -40,12 +40,15 @@ function setup() {
         ins1.play();
     });
     door1 = [
-        new Point((width-15)/2-72, (height-20)/2+81), 
-        new Point((width-15)/2-56, (height-20)/2+77), 
-        new Point((width-15)/2-42, (height-20)/2+72),
-        new Point((width-15)/2-32, (height-20)/2+64),
-        new Point((width-15)/2-25, (height-20)/2+51),
-        new Point((width-15)/2-18, (height-20)/2+37),
+        new Point(172, 222), 
+        new Point(172, 236), 
+        new Point(162, 251), 
+        new Point(158, 260), 
+        new Point(141, 268), 
+        new Point(135, 268), 
+        new Point(124, 268), 
+        new Point(111, 268), 
+        new Point(103, 266),
     ];
     door2 = [
         new Point(698, 286), 
