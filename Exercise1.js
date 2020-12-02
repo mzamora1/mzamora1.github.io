@@ -15,9 +15,13 @@ let currentDoor = 0;
 
 class Point{
     constructor(x, y){
-        this.x = x || 0;
-        this.y = y || 0;
+        this.x = map(x, 0, 400, 0, window.innerWidth-16) || 0;
+        this.y = map(y, 0, 400, 0, window.innerHeight-66) || 0;
     }
+}
+function map(value, a, b, c, d){
+    value = (value - a) / (b - a); // first map value from (a..b) to (0..1)
+    return c + value * (d - c); // then map it from (0..1) to (c..d) and return it
 }
 function preload(){
     ins1 = loadSound('assets/sounds/Click.mp3');
