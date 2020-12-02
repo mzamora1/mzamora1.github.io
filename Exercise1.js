@@ -128,6 +128,7 @@ function draw() {
             rotateHandle(handleX, handleY);
             rotateCircle(circleX, circleY);
             if(visitedboundaries.length == boundaryPoints[currentDoor].length){
+                mouseIsPressed = false;
                 trans = 0;
                 vid.show();
                 vid.loop();
@@ -172,7 +173,7 @@ function draw() {
         console.log(currentDoor);
     }
     if(mouseIsPressed & !isInBounds(11)){
-        if(fail.isPlaying()){
+        if(!fail.isPlaying()){
             fail.play();
         }
     }
