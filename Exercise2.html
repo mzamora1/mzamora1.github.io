@@ -4,12 +4,13 @@
         <link href="Exercise2.css" rel="stylesheet" />
         <link href="navbar.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v5.15.1/js/all.js" crossorigin="anonymous"></script>
+        
     </head>
     <body>
 
         <div class="navbar" id="nav">
-            <a href="home.html">Home</a>
-            <a href="#" id = "settingsLink" >Settings</a>
+            <a href="exSplash.html">Home</a>
+            <a href="#" id="settingsLink" >Settings</a>
             <div class="dropdown">
               <button class="dropbtn">Dropdown <i class="fa fa-caret-down"></i> </button>
               <div class="dropdown-content">
@@ -18,6 +19,7 @@
                 <a href="Exercise3.html">Exercise 3</a>
               </div>
             </div> 
+            <a href="#" class="statsBtn">Player Stats</a>
         </div>
 
         <div id="instructions">
@@ -31,7 +33,7 @@
         <div id="playing">
             <audio src="assets/sounds/flying-dutchman.mp3" id="startSound" preload="auto"></audio>
             <audio src="assets/sounds/scallywags.mp3" id="failSound" preload="auto"></audio>
-            <h2>Typing with Dead Pirate Jack</h2>
+            <h2 id="title">Typing with Dead Pirate Jack</h2>
             <div>
                 <div class="container">
                     <p style="color: rgb(255, 0, 0);">Errors: <span id="errors">0</span></p>
@@ -42,47 +44,75 @@
             <div id="progressBar"></div>
             <div id="errorBar"></div>
             <p id="prompt">youre using a browser without javascript loser</p>
-            <input type="text" id="userInput" autocomplete="off" value="">
+            <input type="text" id="userInput" class="text-input" autocomplete="off" value="">
+            <button id="endBtn" style="display: none; margin: 0 auto;">End Game</button>
         </div>
 
         <div id="stats">
-            <h1>Stats</h1>
-            <h2>You completed the prompt in <span id="timeToComplete">0</span> seconds</h2>
+            <h2 class="statsBtn" style="text-decoration: underline;">Stats</h2>
+            <h2 id="highScoreElt" style="display: none; color: red;">New High Score!</h2>
+            <h2>You completed the prompt in <span id="timeToComplete"></span> seconds</h2>
+            <h2 id="previousTimeElt" class= "newStat">Previous time to complete: <span id="previousTime"></span> seconds</h2>
+            <h2>Words typed per minute: <span id="wordsPerMin"></span></h2>
+            <h2 id="previousWordsElt" class= "newStat">Previous words per minute: <span id="previousWords"></span></h2>
+            <h2>Difficulty: <span id="spanDiff"></span></h2>
+            <h2 id="previousDifficultyElt" class= "newStat">Previous difficulty: <span id="previousDifficulty"></span></h2>
             <button id="celebrateBtn">Click to Celebrate!</button>
         </div>
 
         <div id="celebrate">
             <canvas id="canvas"></canvas>
+            <button id="resetCircles" style="width: 200px; height: 70px; display: inline; position: absolute;">Reset Circles</button>
         </div>
 
         <div id="lose">
-            <img src="assets/pics/spinnyhead.gif" alt="" id="spinny">
+            <img src="/Exercise 2/assets/pics/spinnyhead.gif" alt="" id="spinny">
             <h1>You Lose</h1>
         </div>
+        
         <!-- The Modal -->
         <div id="settings" class="modal">
-
-            <!-- Modal content -->
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2>Settings</h2>
                 <label for="volumeSlider">Volume: <span id="volume">20</span>%</label>
-                <input type="range" id="volumeSlider" min="0" max="100" value="0">
+                <input type="range" id="volumeSlider" min="0" max="100" value="20">
                 <br> <br>
                 <label for="sizeSlider">Circle Size: <span id="size">100</span>%</label>
-                <input type="range" id="sizeSlider" min="10" max="130" value="100">
+                <input type="range" id="sizeSlider" min="10" max="150" value="100">
                 <br> <br>
                 <label for="speedSlider">Circle Speed: <span id="speed">30</span>%</label>
-                <input type="range" id="speedSlider" min="1" max="100" value="30">
+                <input type="range" id="speedSlider" min="1" max="120" value="30">
+                <br><br>
+                <label for="circleInput">Number of Circles: </label>
+                <input type="text" value="100" class="text-input" id="circleInput" style="width: 100px; height: 30px; font-size: 20px; top: 0px;">
+                <br><br>
+                <label for="promptInput">Enter anything to type about: </label>
+                <input type="text" value="press enter when complete" class="text-input" id="promptInput" style="width: 250px; height: 30px; font-size: 20px; top: 0px;">
                 <br><br>
                 <label for="difficulty">Difficulty: </label>
                 <select id="difficulty">
                     <option value="easy">Easy</option>
-                    <option value="normal">Normal</option>
+                    <option value="normal" selected>Normal</option>
                     <option value="extreme">Extreme</option>
-                  </select>
+                </select>
             </div>
         </div>
+
+        <div id="statsModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h1>High Score</h1>
+                <h2>You completed the prompt in <span id="storageTime"></span> seconds</h2>
+                <h2>Words typed per minute: <span id="storageWords"></span></h2>
+                <h2>Difficulty: <span id="storageDiff"></span></h2>
+            </div>
+        </div>
+        <script>
+            document.getElementById("storageTime").innerHTML = localStorage.getItem("timeToComplete");
+            document.getElementById("storageWords").innerHTML = localStorage.getItem("wordsPerMin");
+            document.getElementById("storageDiff").innerHTML = localStorage.getItem("difficulty");
+        </script>
         
         <script src="Exercise2.js"></script>
     </body>
