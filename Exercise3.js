@@ -34,7 +34,7 @@ function preload(){
   duck = loudSound('assets/sounds/duck.mp3')
   instruc = createImg('assets/pics/intro.JPG','instructions');
   gif_createheart = createImg('assets/spinnyAnimation/gif_heart.gif','heart');
-  gif_createpent = createImg('assets/spimnnyAnimation/gif_pent.gif','pent');
+  gif_createpent = createImg('assets/spinnyAnimation/gif_pent.gif','pent');
   gif_createhouse = createImg('assets/spinnyAnimation/gif_house.gif','house');
 }
 
