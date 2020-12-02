@@ -16,7 +16,7 @@ function preload(){
 
 function intro(){
   background(chalk);
-  instruc = createImg('assets/pics/intro.jpg','instructions');
+  instruc = createImg('assets/pics/intro.JPG','instructions');
   instruc.position(0,0);
   instruc.mouseClicked(()=>{
     instruc.hide();
