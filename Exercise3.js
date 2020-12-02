@@ -8,7 +8,7 @@ function preload(){
   gif_loadpent = loadImage('assets/spinnyAnimation/gif_pent.gif');
   gif_loadhouse = loadImage('assets/spinnyAnimation/gif_house.gif');
   chalk = loadImage('assets/pics/chalk.jpg');
-  end = loadImage('assets/pics/end.jpg');
+  end = loadImage('assets/pics/end.JPG');
   reset_snd = loadSound('assets/sounds/reset_snd.mp3');
   yay = loadSound('assets/sounds/yay.mp3');
   music = loadSound('assets/sounds/music.mp3');
