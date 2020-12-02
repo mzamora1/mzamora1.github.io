@@ -1,9 +1,7 @@
 body{
     text-align: center;
     margin: 0px;
-    height: 100%;
 }
-
 h1{
     font-size: 60px;
 }
@@ -28,6 +26,7 @@ button:hover{
     letter-spacing: 3px;
     background: white;
     transition: all 0.3s ease 0s;
+    cursor: pointer;
 }
 img{
     padding-left: 50px;
@@ -38,6 +37,19 @@ input{
     font-size: 40px;
     margin-bottom: 20px;
     margin-top: -30px;
+}
+#endBtn{
+    position: relative;
+    top: -7px;
+    left: 40px;
+}
+.newStat{
+    display: none;
+    color: red;
+    font-size: 30px;
+}
+.statsBtn:hover{
+    cursor: pointer;
 }
 
 .instructions{
@@ -54,6 +66,9 @@ input{
     0% {background-position: 0% 0%}
     
     100% {background-position: 0% 100%}
+}
+.loading{
+    cursor: wait;
 }
 
 /* Will be added to the body with js */
