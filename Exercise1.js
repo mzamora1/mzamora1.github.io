@@ -12,6 +12,7 @@ let boundaryPoints = [];
 let door1, door2;
 let currentDoor = 0;
 
+
 class Point{
     constructor(x, y){
         this.x = x || 0;
