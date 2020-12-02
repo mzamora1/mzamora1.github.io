@@ -2,355 +2,303 @@ var gif_createheart, gif_loadheart;
 var gif_createpent, gif_loadpent;
 var gif_createhouse, gif_loadhouse;
 let instruc, end;
+let canvas, currentDrawing = 0;
+
+let completionGifs = [];
+
+class Point{
+  constructor(x,y){
+    this.x = map(x, 0, 400, 0, window.innerWidth-16) || 0;
+    this.y = map(y, 0, 400, 0, window.innerHeight-66) || 0;
+    this.size = map(13, 0, 400, 0, window.innerWidth-16);
+    this.visited = false;
+  }
+}
+class gifContainer{
+  constructor(text, create, sound){
+    this.gif_create = create;
+    this.text = text;
+    this.sound = sound;
+  }
+}
+function map(value, a, b, c, d){
+  value = (value - a) / (b - a); // first map value from (a..b) to (0..1)
+  return c + value * (d - c); // then map it from (0..1) to (c..d) and return it
+}
 
 function preload(){
-  gif_loadheart = loadImage('assets/spinnyAnimation/gif_heart.gif');
-  gif_loadpent = loadImage('assets/spinnyAnimation/gif_pent.gif');
-  gif_loadhouse = loadImage('assets/spinnyAnimation/gif_house.gif');
   chalk = loadImage('assets/pics/chalk.jpg');
   end = loadImage('assets/pics/end.JPG');
   yay = loadSound('assets/sounds/yay.mp3');
-  burger = loadSound('assets/sounds/burger.mp3');
-  duck = loadSound('assets/sounds/duck.mp3');
-}
-
-function intro(){
-  background(chalk);
+  burger = loudSound('assets/sounds/burger.mp3');
+  duck = loudSound('assets/sounds/duck.mp3')
   instruc = createImg('assets/pics/intro.JPG','instructions');
-  instruc.position(0,0);
-  instruc.mouseClicked(()=>{
-    instruc.hide();
-  });
-  drawingArray = heartArray
+  gif_createheart = createImg('assets/pics/gif_heart.gif','heart');
+  gif_createpent = createImg('assets/pics/gif_pent.gif','pent');
+  gif_createhouse = createImg('assets/pics/gif_house.gif','house');
 }
 
-function setup() {
-  createCanvas(400, 400);
-  drawingArray = heartArray;
-  background(chalk);
-  intro();
-  gif_createheart = createImg('assets/spinnyAnimation/gif_heart.gif','heart');
-  gif_createheart.style("position:absolute");
-  gif_createheart.hide();
-  gif_createpent = createImg('assets/spinnyAnimation/gif_pent.gif','pent');
-  gif_createpent.style("position:absolute");
-  gif_createpent.hide();
-  gif_createhouse = createImg('assets/spinnyAnimation/gif_house.gif','house');
-  gif_createhouse.style("position:absolute");
-  gif_createhouse.hide();
-}
 
-let text_heart = heart_text_place;
-function heart_text_place(){
-  textSize(32);
-  text('HEART',250,320);
-  fill('white');
-}
+let centerElement = (img) => img.position((width/2 - img.size().width/2),  (height/2 - img.size().height/2));
 
-let text_star = star_text_place;
-function star_text_place(){
-  textSize(32);
-  text('Pentagram',200,320);
-  fill(245);
-}
 
-let text_house = house_text_place;
-function house_text_place(){
-  textSize(32);
-  text('House',260,320);
-  fill(245);
-}
-
-let text_next = next_text_place;
-function next_text_place(){
-  textSize(10);
-  text('Click on the GIF to Continue',175,350);
-  fill(245);
-}  
-
-let text_empty = empty_text_place;
-function empty_text_place(){
-  textSize(1);
-  text('BABABuoi',175,350);
-  fill('white');
-}
-
-let heartArray = [];
-  heartArray.push({x: 271, y:91}); 
-  heartArray.push({x: 281, y:73}); 
-  heartArray.push({x: 298, y:62}); 
-  heartArray.push({x: 317, y:59}); 
-  heartArray.push({x: 332, y:69}); 
-  heartArray.push({x: 339, y:82}); 
-  heartArray.push({x: 342, y:98}); 
-  heartArray.push({x: 334, y:109}); 
-  heartArray.push({x: 326, y:125}); 
-  heartArray.push({x: 318, y:140}); 
-  heartArray.push({x: 310, y:153}); 
-  heartArray.push({x: 299, y:164}); 
-  heartArray.push({x: 286, y:178}); 
-  heartArray.push({x: 274, y:192}); 
-  heartArray.push({x: 258, y:78}); 
-  heartArray.push({x: 247, y:69}); 
-  heartArray.push({x: 236, y:61}); 
-  heartArray.push({x: 223, y:59}); 
-  heartArray.push({x: 211, y:66}); 
-  heartArray.push({x: 204, y:78}); 
-  heartArray.push({x: 204, y:92}); 
-  heartArray.push({x: 207, y:104}); 
-  heartArray.push({x: 211, y:118}); 
-  heartArray.push({x: 216, y:133}); 
-  heartArray.push({x: 224, y:146}); 
-  heartArray.push({x: 232, y:157}); 
-  heartArray.push({x: 242, y:170}); 
-  heartArray.push({x: 251, y:181}); 
-  heartArray.push({x: 261, y:190}); 
-  
-
+let heartArray = [
+  new Point(190, 138), 
+  new Point(205, 125), 
+  new Point(226, 113), 
+  new Point(250, 109), 
+  new Point(275, 117), 
+  new Point(289, 139), 
+  new Point(294, 157), 
+  new Point(286, 178), 
+  new Point(275, 193), 
+  new Point(266, 206), 
+  new Point(253, 221), 
+  new Point(235, 234), 
+  new Point(215, 250), 
+  new Point(196, 258), 
+  new Point(174, 130), 
+  new Point(162, 120), 
+  new Point(142, 106), 
+  new Point(122, 104), 
+  new Point(106, 114), 
+  new Point(98, 128), 
+  new Point(96, 147), 
+  new Point(102, 165), 
+  new Point(111, 181), 
+  new Point(123, 199), 
+  new Point(137, 218), 
+  new Point(149, 233), 
+  new Point(161, 246), 
+  new Point(173, 258), 
+  new Point(183, 266),
+];
 
 let starArray = [];
-  starArray.push({x: 194, y:52}); 
-  starArray.push({x: 182, y:68}); 
-  starArray.push({x: 204, y:72}); 
-  starArray.push({x: 172, y:86}); 
-  starArray.push({x: 208, y:94}); 
-  starArray.push({x: 163, y:106}); 
-  starArray.push({x: 214, y:117}); 
-  starArray.push({x: 233, y:122}); 
-  starArray.push({x: 258, y:128}); 
-  starArray.push({x: 277, y:135}); 
-  starArray.push({x: 267, y:150}); 
-  starArray.push({x: 247, y:160}); 
-  starArray.push({x: 228, y:169}); 
-  starArray.push({x: 151, y:119}); 
-  starArray.push({x: 134, y:124}); 
-  starArray.push({x: 114, y:130}); 
-  starArray.push({x: 99, y:138}); 
-  starArray.push({x: 116, y:150}); 
-  starArray.push({x: 133, y:158}); 
-  starArray.push({x: 150, y:169}); 
-  starArray.push({x: 146, y:185}); 
-  starArray.push({x: 143, y:203}); 
-  starArray.push({x: 142, y:225}); 
-  starArray.push({x: 162, y:212}); 
-  starArray.push({x: 178, y:200}); 
-  starArray.push({x: 190, y:186}); 
-  starArray.push({x: 201, y:197}); 
-  starArray.push({x: 212, y:212}); 
-  starArray.push({x: 227, y:222}); 
-  starArray.push({x: 230, y:209}); 
-  starArray.push({x: 230, y:194}); 
-  starArray.push({x: 192, y:34}); 
-  starArray.push({x: 177, y:40}); 
-  starArray.push({x: 157, y:51}); 
-  starArray.push({x: 141, y:62}); 
-  starArray.push({x: 124, y:77}); 
-  starArray.push({x: 110, y:89}); 
-  starArray.push({x: 98, y:102}); 
-  starArray.push({x: 88, y:117}); 
-  starArray.push({x: 83, y:136}); 
-  starArray.push({x: 83, y:155}); 
-  starArray.push({x: 86, y:173}); 
-  starArray.push({x: 92, y:190}); 
-  starArray.push({x: 98, y:209}); 
-  starArray.push({x: 106, y:225}); 
-  starArray.push({x: 116, y:240}); 
-  starArray.push({x: 130, y:255}); 
-  starArray.push({x: 149, y:262}); 
-  starArray.push({x: 170, y:268}); 
-  starArray.push({x: 194, y:266}); 
-  starArray.push({x: 216, y:261}); 
-  starArray.push({x: 237, y:251}); 
-  starArray.push({x: 210, y:38}); 
-  starArray.push({x: 226, y:46}); 
-  starArray.push({x: 239, y:57}); 
-  starArray.push({x: 256, y:70}); 
-  starArray.push({x: 265, y:82}); 
-  starArray.push({x: 275, y:96}); 
-  starArray.push({x: 285, y:112}); 
-  starArray.push({x: 294, y:130}); 
-  starArray.push({x: 295, y:142}); 
-  starArray.push({x: 295, y:161}); 
-  starArray.push({x: 292, y:175}); 
-  starArray.push({x: 288, y:190}); 
-  starArray.push({x: 284, y:204}); 
-  starArray.push({x: 278, y:218}); 
-  starArray.push({x: 272, y:233}); 
-  starArray.push({x: 259, y:243});
+  starArray.push(new Point( 194, 52)); 
+  starArray.push(new Point( 182, 68)); 
+  starArray.push(new Point( 204, 72)); 
+  starArray.push(new Point( 172, 86)); 
+  starArray.push(new Point( 208, 94)); 
+  starArray.push(new Point( 163, 106)); 
+  starArray.push(new Point( 214, 117)); 
+  starArray.push(new Point( 233, 122)); 
+  starArray.push(new Point( 258, 128)); 
+  starArray.push(new Point( 277, 135)); 
+  starArray.push(new Point( 267, 150)); 
+  starArray.push(new Point( 247, 160)); 
+  starArray.push(new Point( 228, 169)); 
+  starArray.push(new Point( 151, 119)); 
+  starArray.push(new Point( 134, 124)); 
+  starArray.push(new Point( 114, 130)); 
+  starArray.push(new Point( 99, 138)); 
+  starArray.push(new Point( 116, 150)); 
+  starArray.push(new Point( 133, 158)); 
+  starArray.push(new Point( 150, 169)); 
+  starArray.push(new Point( 146, 185)); 
+  starArray.push(new Point( 143, 203)); 
+  starArray.push(new Point( 142, 225)); 
+  starArray.push(new Point( 162, 212)); 
+  starArray.push(new Point( 178, 200)); 
+  starArray.push(new Point( 190, 186)); 
+  starArray.push(new Point( 201, 197)); 
+  starArray.push(new Point( 212, 212)); 
+  starArray.push(new Point( 227, 222)); 
+  starArray.push(new Point( 230, 209)); 
+  starArray.push(new Point( 230, 194)); 
+  starArray.push(new Point( 192, 34)); 
+  starArray.push(new Point( 177, 40)); 
+  starArray.push(new Point( 157, 51)); 
+  starArray.push(new Point( 141, 62)); 
+  starArray.push(new Point( 124, 77)); 
+  starArray.push(new Point( 110, 89)); 
+  starArray.push(new Point( 98, 102)); 
+  starArray.push(new Point( 88, 117)); 
+  starArray.push(new Point( 83, 136)); 
+  starArray.push(new Point( 83, 155)); 
+  starArray.push(new Point( 86, 173)); 
+  starArray.push(new Point( 92, 190)); 
+  starArray.push(new Point( 98, 209)); 
+  starArray.push(new Point( 106, 225)); 
+  starArray.push(new Point( 116, 240)); 
+  starArray.push(new Point( 130, 255)); 
+  starArray.push(new Point( 149, 262)); 
+  starArray.push(new Point( 170, 268)); 
+  starArray.push(new Point( 194, 266)); 
+  starArray.push(new Point( 216, 261)); 
+  starArray.push(new Point( 237, 251)); 
+  starArray.push(new Point( 210, 38)); 
+  starArray.push(new Point( 226, 46)); 
+  starArray.push(new Point( 239, 57)); 
+  starArray.push(new Point( 256, 70)); 
+  starArray.push(new Point( 265, 82)); 
+  starArray.push(new Point( 275, 96)); 
+  starArray.push(new Point( 285, 112)); 
+  starArray.push(new Point( 294, 130)); 
+  starArray.push(new Point( 295, 142)); 
+  starArray.push(new Point( 295, 161)); 
+  starArray.push(new Point( 292, 175)); 
+  starArray.push(new Point( 288, 190)); 
+  starArray.push(new Point( 284, 204)); 
+  starArray.push(new Point( 278, 218)); 
+  starArray.push(new Point( 272, 233)); 
+  starArray.push(new Point( 259, 243));
 
-let houseArray = [];
-  houseArray.push({x: 126, y:120}); 
-  houseArray.push({x: 134, y:111}); 
-  houseArray.push({x: 141, y:101}); 
-  houseArray.push({x: 150, y:93}); 
-  houseArray.push({x: 158, y:82}); 
-  houseArray.push({x: 167, y:72}); 
-  houseArray.push({x: 176, y:62}); 
-  houseArray.push({x: 184, y:53}); 
-  houseArray.push({x: 192, y:59}); 
-  houseArray.push({x: 200, y:70}); 
-  houseArray.push({x: 208, y:80}); 
-  houseArray.push({x: 215, y:91}); 
-  houseArray.push({x: 222, y:103}); 
-  houseArray.push({x: 230, y:114}); 
-  houseArray.push({x: 137, y:122}); 
-  houseArray.push({x: 148, y:124}); 
-  houseArray.push({x: 164, y:123}); 
-  houseArray.push({x: 181, y:122}); 
-  houseArray.push({x: 193, y:122}); 
-  houseArray.push({x: 203, y:122}); 
-  houseArray.push({x: 215, y:122}); 
-  houseArray.push({x: 226, y:124}); 
-  houseArray.push({x: 132, y:102}); 
-  houseArray.push({x: 132, y:92}); 
-  houseArray.push({x: 132, y:80}); 
-  houseArray.push({x: 131, y:72}); 
-  houseArray.push({x: 140, y:71}); 
-  houseArray.push({x: 150, y:72}); 
-  houseArray.push({x: 150, y:82}); 
-  houseArray.push({x: 136, y:130}); 
-  houseArray.push({x: 135, y:140}); 
-  houseArray.push({x: 136, y:150}); 
-  houseArray.push({x: 135, y:163}); 
-  houseArray.push({x: 135, y:178}); 
-  houseArray.push({x: 135, y:190}); 
-  houseArray.push({x: 134, y:200}); 
-  houseArray.push({x: 145, y:202}); 
-  houseArray.push({x: 157, y:202}); 
-  houseArray.push({x: 170, y:202}); 
-  houseArray.push({x: 186, y:202}); 
-  houseArray.push({x: 203, y:202}); 
-  houseArray.push({x: 214, y:202}); 
-  houseArray.push({x: 222, y:203}); 
-  houseArray.push({x: 221, y:193}); 
-  houseArray.push({x: 221, y:184}); 
-  houseArray.push({x: 221, y:174}); 
-  houseArray.push({x: 220, y:164}); 
-  houseArray.push({x: 220, y:152}); 
-  houseArray.push({x: 220, y:142}); 
-  houseArray.push({x: 220, y:134}); 
-  houseArray.push({x: 170, y:192}); 
-  houseArray.push({x: 170, y:182}); 
-  houseArray.push({x: 172, y:169}); 
-  houseArray.push({x: 181, y:167}); 
-  houseArray.push({x: 190, y:169}); 
-  houseArray.push({x: 193, y:179}); 
-  houseArray.push({x: 194, y:191}); 
+  //  ({x:\s)|y:|}
 
-let drawingArray = []
+let houseArray = [
+  new Point(77, 172), 
+  new Point(94, 173), 
+  new Point(113, 173), 
+  new Point(130, 173), 
+  new Point(148, 174), 
+  new Point(165, 174), 
+  new Point(185, 174), 
+  new Point(204, 174), 
+  new Point(222, 176), 
+  new Point(244, 176), 
+  new Point(264, 176), 
+  new Point(80, 158), 
+  new Point(94, 140), 
+  new Point(94, 118), 
+  new Point(94, 98), 
+  new Point(94, 83), 
+  new Point(103, 82), 
+  new Point(115, 81), 
+  new Point(125, 83), 
+  new Point(125, 93), 
+  new Point(125, 110), 
+  new Point(134, 103), 
+  new Point(150, 84), 
+  new Point(167, 66), 
+  new Point(184, 53), 
+  new Point(194, 64), 
+  new Point(202, 76), 
+  new Point(212, 86), 
+  new Point(220, 97), 
+  new Point(230, 107), 
+  new Point(237, 117), 
+  new Point(244, 133), 
+  new Point(253, 146), 
+  new Point(260, 160), 
+  new Point(98, 187), 
+  new Point(98, 203), 
+  new Point(98, 219), 
+  new Point(98, 231), 
+  new Point(98, 244), 
+  new Point(98, 259), 
+  new Point(98, 278), 
+  new Point(116, 282), 
+  new Point(134, 281), 
+  new Point(154, 282), 
+  new Point(174, 282), 
+  new Point(195, 281), 
+  new Point(213, 280), 
+  new Point(228, 280), 
+  new Point(246, 279), 
+  new Point(248, 264), 
+  new Point(249, 246), 
+  new Point(247, 232), 
+  new Point(248, 212), 
+  new Point(247, 198), 
+  new Point(154, 270), 
+  new Point(156, 256), 
+  new Point(158, 239), 
+  new Point(173, 240), 
+  new Point(189, 241), 
+  new Point(190, 255), 
+  new Point(190, 268),
+];
+
+let drawingArray = [heartArray, starArray, houseArray];
 let blankArray = []
 let visitedboundaries = [];
 
-function heart_animation(){
-  background(0);
-  drawingArray = blankArray;
-  text_heart = text_next;
-  image(gif_loadheart, 0, 0);
-  burger.play();
-  gif_createheart.position(50,25);
-  gif_createheart.show();
-  gif_createheart.mouseClicked(()=>{
-    drawingArray=starArray;
-    text_next = text_empty;
-    text_star();
-    gif_createheart.hide();
-  });
-}
-
-function star_animation(){
-  background(0);
-  drawingArray = blankArray;
-  text_star = text_next;
-  image(gif_loadpent, 0, 0);
-  duck.play();
-  gif_createpent.position(50,25);
-  gif_createpent.show();
-  gif_createpent.mouseClicked(()=>{
-    drawingArray=houseArray;
-    text_next = text_empty;
-    text_house();
-    gif_createpent.hide();
-  });
-}
-
-function house_animation(){
-  background(0);
-  drawingArray = blankArray;
-  text_house = text_next;
-  image(gif_loadhouse, 0, 0);
-  gif_createhouse.position(50,25);
-  gif_createhouse.show();
-  gif_createhouse.mouseClicked(()=>{
-    //drawingArray=houseArray; <= if more drawings are added.
-    text_next = text_empty;
-    text_house();
-    gif_createhouse.hide();
-  image(end,50,150);
-  });
-}
-
+let result = "";
 function mouseClicked(){
-
+  result += `new Point(${mouseX}, ${mouseY}), \n`
 }
+function doubleClicked(){
+  result = "";
+}
+function mouseWheel(){
+  console.log(result);
+}
+
+function setup() {
+  canvas = createCanvas(windowWidth-16, (windowHeight-66));
+  textAlign(CENTER)
+  completionGifs = [
+    new gifContainer("heart", gif_createheart, burger), 
+    new gifContainer("pentagram", gif_createpent, duck), 
+    new gifContainer("house", gif_createhouse, burger), 
+    
+  ];
+  //music.loop();
+  
+  centerElement(instruc);
+  instruc.mouseClicked(() => instruc.hide());
+
+  completionGifs.forEach((obj) => {
+    centerElement(obj.gif_create);
+    obj.gif_create.hide();
+    obj.gif_create.mouseClicked(function() {
+      obj.sound.play();
+      this.hide();
+      clear(); background(chalk);
+    });
+  })
+
+}// end of setup()
 
 function draw() { 
-  text_heart();
+  textSize(32); textAlign(CENTER);
+  text(completionGifs[currentDrawing].text, width/2, height/2 + 150)
 
-  for(let i = 0; i < (drawingArray).length; i++){
-    circle((drawingArray[i]).x, (drawingArray[i]).y, 4);
-  }
+  drawingArray[currentDrawing].forEach((point) => {
+    point.visited ? fill(0, 255, 0) : fill(255, 0, 0); //if visited then fill green, else fill red
+    circle(point.x, point.y, 4);
+  });
   
   stroke(200);
   if (mouseIsPressed === true) {
     line(mouseX, mouseY, pmouseX, pmouseY);
-    checkAllBoundaries(14);
+    if(checkAllBoundaries()){
+      clear(); background(0);
+      textSize(20); fill(255);
+      text('Click on the GIF to Continue',width/2, height/2 +170);
+      completionGifs[currentDrawing].gif_create.show()
+    }
   }
-}
+}// end of draw()
 
 
-function checkAllBoundaries(size){
-  
-    let inAnyBoundary = false;
-  
-    for(let i = 0; i < drawingArray.length; i++){
-        let boundary = {
-            left: (drawingArray[i]).x - size,
-            right: (drawingArray[i]).x + size,
-            top: (drawingArray[i]).y - size,
-            bottom: (drawingArray[i]).y + size
-        }
-      
-        //rect(boundary.left, boundary.top, size*2); //for testing purposes
-        
-    if(mouseX > boundary.left && mouseX < boundary.right && mouseY < boundary.bottom && mouseY >     boundary.top){
+function checkAllBoundaries(){
+  let inAnyBoundary = false;
+  for(let i = 0; i < drawingArray[currentDrawing].length; i++){
+    let point = drawingArray[currentDrawing][i];
+    
+    //circle(point.x, point.y, point.size*2); //for testing purposes
+    if(dist(mouseX, mouseY, point.x, point.y) < point.size){
       inAnyBoundary = true;
-      if (!visitedboundaries.includes(drawingArray[i])){
-            visitedboundaries.push(drawingArray[i]);
-            //console.log("In Bounds");
-        }
+      if (!point.visited){
+        point.visited = true;
+        visitedboundaries.push(point);
+        //console.log("In Bounds");
       }
     }
-    
-    if (visitedboundaries.length >= drawingArray.length){
-          visitedboundaries = [];
-          clear();
-          background(chalk);
-      
-          if (drawingArray == heartArray){
-            yay.play();
-            heart_animation();
-            text_star();
-          } else if (drawingArray == starArray){
-            yay.play();
-            star_animation();
-          } else if (drawingArray ==houseArray){
-            yay.play();
-            house_animation();
-          } 
-    }
-  
-  if(!inAnyBoundary){ 
-      clear();
-      background(chalk);
   }
-}
+  
+  if (drawingArray[currentDrawing].every((point) => point.visited)){
+    currentDrawing++;
+    clear(); background(chalk);
+    yay.play();
+    return true;
+  }
+
+  if(!inAnyBoundary){ 
+    clear(); background(chalk);
+    drawingArray[currentDrawing].forEach((point) => point.visited = false);
+  }
+  
+}// end of checkAllBoundaries()
