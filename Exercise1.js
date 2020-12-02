@@ -27,10 +27,6 @@ function preload(){
     fail = loadSound("assets/sounds/sweet_nothings.mp3");
 }
 function setup() {
-    homeBtn = createButton("Home");
-    homeBtn.mouseClicked(() => {
-        window.open("home.html", "_self");
-    });
     createCanvas((windowWidth-15), (windowHeight-80));
     button = createButton("Instruction");
     button.mouseClicked(() => {
