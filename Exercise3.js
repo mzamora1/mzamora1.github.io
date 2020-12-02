@@ -1,7 +1,8 @@
 var gif_createheart, gif_loadheart;
 var gif_createpent, gif_loadpent;
 var gif_createhouse, gif_loadhouse;
-let instruc, end;
+let instruc, end, chalk;
+let burger, duck, yay;
 let canvas, currentDrawing = 0;
 
 let completionGifs = [];
