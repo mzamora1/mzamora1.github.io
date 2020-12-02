@@ -363,6 +363,9 @@ function updateStats(){
     getElement("wordsPerMin").innerHTML = wordsPerMin;
     getElement("spanDiff").innerHTML = diffDropdown.value;
     storeStats(timeToComplete, wordsPerMin, diffDropdown.value);
+    getElement("storageTime").innerHTML = localStorage.getItem("timeToComplete");
+    getElement("storageWords").innerHTML = localStorage.getItem("wordsPerMin");
+    getElement("storageDiff").innerHTML = localStorage.getItem("difficulty");
 }
 
 function drawCanvas(){
