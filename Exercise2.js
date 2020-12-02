@@ -15,85 +15,81 @@ var userX, userY;
 var circleArray;
 var loseTimer, canvasTimer;
 var game;
-var wikiText;
 
-async function searchWiki(input){
-    let wiki = "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&origin=*&search="; 
-    let searchUrl = wiki + input.replace(/\s/g, "_"); //replace spaces with _
-    let wikiText, fileURLs = [];
-    fetch(searchUrl).then((response) => { //search for pages related to search term 
-        response.json().then((json) => { 
-            if(json[1][1] != undefined){ //if valid search term
-                let title = json[1][1].replace(/\s+/g, "_"); //select first page that results from the search
-                let contentUrl = "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=revisions&contentmodel=text&rvprop=content&rvparse&format=json&titles=";
-                let imageUrl = "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=images&format=json&titles="
-                fetch(contentUrl + title).then((response) => { //get the content of the page
-                    response.json().then((json) => { //filter out html tags and start a new game with result
-                        let pageId = Object.keys(json["query"]["pages"])[0]
-                        wikiText = String(json["query"]["pages"][pageId]["revisions"][0]["*"]);
-                        let insideArrow = /<(.*?)>/g //selects all characters inside < > (all the html tags)
-                        let pattern = /\W+\d+;/g //selects non letters followed by numbers followed by a ;
-                        let missingSpaces = /([a-z](?=[A-Z]|\d))|(\d(?=[A-Z]|[a-z]))|([A-Z](?=[A-Z]|\d))|(\.(?=\w))/g //selects lowercase letter that is followed by uppercase letter or digit...
-                        let insideParentheses = /\((.*?)\)/g
-                        let extraSpaces = /\s(?=[\s\.,])/g
-                        let lineBreaks = /\n|\r/g
-                        wikiText = wikiText.replace(insideArrow, "");
-                        wikiText = wikiText.replace(insideParentheses, "");
-                        wikiText = wikiText.replace(pattern, "");
-                        wikiText = wikiText.replace(lineBreaks, "");
-                        wikiText = wikiText.replace(missingSpaces, "$& ");//replace selected text with itself plus a space
-                        wikiText = wikiText.replace(extraSpaces, ""); 
-                        getElement("title").innerHTML = "Typing with "+ title.replace(/_/g, " ");
-                        document.body.classList.remove("loading");
-                        hide(getElement("settings"));
-                        game = new Game(wikiText, fileURLs);
-                        getElement("startBtn").onclick();
-                        getElement("endBtn").style.display = "inline-block"
-                    });
-                });
-                fetch(imageUrl + title).then((response) => { //gather all file names for images on page
-                    response.json().then((json) => { 
-                        let pageId = Object.keys(json["query"]["pages"])[0];
-                        let images = json["query"]["pages"][pageId]["images"];
-                        let urlForFiles = `https://en.wikipedia.org/w/api.php?action=query&prop=imageinfo&origin=*&iiprop=url&format=json&titles=`;
-                        images.forEach(image => {
-                            let fileName = (image["title"]).replace(/\s/g, "_");
-                            if(!/\.ogv$/g.test(fileName) && fileName != "File:Commons-logo.svg" && fileName != "File:Folder_Hexagonal_Icon.svg" && fileName != "File:Ambox_important.svg" && fileName != "File:OOjs_UI_icon_edit-ltr-progressive.svg"){
-                                //console.log(fileName);
-                                fileName = fileName.replace(/\&/g, "%26"); //replace & with _
-                                console.log(fileName);
-                                fetch(urlForFiles + fileName).then((response) => {//get the url for each image
-                                    response.json().then((json) => {
-                                        let pageId = Object.keys(json["query"]["pages"])[0];
-                                        let file = json["query"]["pages"][pageId]["imageinfo"][0]["url"];
-                                        fileURLs.push(file);
-                                    });
-                                });
-                            }
-                        });
-                    });
-                });
-            }
-        });
+
+async function searchContent(title){ //returns a string from wiki
+    let contentUrl = "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=revisions&contentmodel=text&rvprop=content&rvparse&format=json&titles=";
+    let response = await fetch(contentUrl + title); //wait for page to load
+    let json = await response.json();
+    let pageId = Object.keys(json["query"]["pages"])[0]
+    let wikiText = String(json["query"]["pages"][pageId]["revisions"][0]["*"]); //wikiAPI returns html code for the page so we need to filter it out
+    const insideArrow = /<(.*?)>/g //selects all characters inside < > (all the html tags)
+    const pattern = /\W+\d+;/g //selects non letters followed by numbers followed by a ;
+    const missingSpaces = /([a-z](?=[A-Z]|\d))|(\d(?=[A-Z]|[a-z]))|([A-Z](?=[A-Z]|\d))|(\.(?=\w))/g //selects lowercase letter that is followed by uppercase letter or digit...
+    const insideParentheses = /\((.*?)\)/g
+    const extraSpaces = /\s(?=[\s\.,])/g
+    const lineBreaks = /\n|\r/g
+    wikiText = wikiText.replace(insideArrow, "");
+    wikiText = wikiText.replace(insideParentheses, "");
+    wikiText = wikiText.replace(pattern, "");
+    wikiText = wikiText.replace(lineBreaks, "");
+    wikiText = wikiText.replace(missingSpaces, "$& ");//replace selected text with itself plus a space
+    wikiText = wikiText.replace(extraSpaces, ""); 
+    getElement("title").innerHTML = "Typing with "+ title.replace(/_/g, " ");
+    return wikiText;
+}
+async function searchImages(title){ //returns an array with all images on wiki page
+    let fileURLs = [];
+    const imageUrl = "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=images&format=json&titles="
+    let response = await fetch(imageUrl + title);
+    let json = await response.json();
+    let pageId = Object.keys(json["query"]["pages"])[0];
+    let images = json["query"]["pages"][pageId]["images"];
+    const urlForFiles = `https://en.wikipedia.org/w/api.php?action=query&prop=imageinfo&origin=*&iiprop=url&format=json&titles=`;
+    images.forEach(async (image) => {
+        let fileName = (image["title"]).replace(/\s/g, "_");
+        if(!/(ogv$)|(ogg$)/g.test(fileName) && fileName != "File:Commons-logo.svg" && fileName != "File:Folder_Hexagonal_Icon.svg" && fileName != "File:Ambox_important.svg" && fileName != "File:OOjs_UI_icon_edit-ltr-progressive.svg" && fileName != "File:Semi-protection-shackle.svg" && fileName != "File:Wikiquote-logo.svg" && fileName != "File:A_coloured_voting_box.svg"){
+            fileName = fileName.replace(/\&/g, "%26"); //replace & with _
+            console.log(fileName);
+            let response = await fetch(urlForFiles + fileName)
+            let json = await response.json();
+            let pageId = Object.keys(json["query"]["pages"])[0];
+            let file = json["query"]["pages"][pageId]["imageinfo"][0]["url"];
+            fileURLs.push(file);
+        }
     });
+    return fileURLs;
+}
+
+async function searchWiki(input){ //returns an object with a string for prompt and array for images
+    const wiki = "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&origin=*&search="; 
+    let searchUrl = wiki + input.replace(/\s/g, "_"); //replace spaces with _
+    let response = await fetch(searchUrl);
+    let json = await response.json();
+    if(json[1][1] != undefined){ //if valid search term
+        let title = json[1][1].replace(/\s+/g, "_"); //select first page that results from the search
+        let text = await searchContent(title);
+        let files = await searchImages(title);
+        return {text, files};
+    }
 }
 
 
-class Game{
-    constructor(text, src){
+class Game{ //represents the typing game
+    constructor(text, src){ //optional parameters: when included game is using wikiText
         this.wordsTyped = 0;
         this.totalWordsTyped = 0;
         this.errors = 0;
         this.totalErrors = 0;
         this.startTime = 0;
-        this.srcArray = src || [
+        this.srcArray = src || [ //use src if its not undefined otherwise use this array for images
             "https://cdn.discordapp.com/attachments/766444116913291277/779104744110817330/gangsta_pirates.jpg",
             "https://cdn.discordapp.com/attachments/766444116913291277/779104793431113738/math_racist.jpg",
             "https://cdn.discordapp.com/attachments/766444116913291277/779104837161058314/talkin_pirates.jpg",
             "https://cdn.discordapp.com/attachments/766444116913291277/779104895302369310/pirates_fighting.jpg",
             "https://cdn.discordapp.com/attachments/766444116913291277/779104949765668901/thinkin_pirate.jpg"
         ];
-        this.array =  toArray(text) || [
+        this.array =  toArray(text) || [ //stores all the prompt text
             "Gentlemen, stealing is very ",//unbecoming of those of such noble birth as ourselves. "+
             // "Surely it would be better to politely ask these fine Spaniards for a share of the booty, "+
             // "perhaps in exchange for some of our booties. Come on lads, lets go make new friends. ",
@@ -107,7 +103,7 @@ class Game{
             // "long nappy-wappy, an then we’s gonna convince the resta the crew ta join us! "+
             // "Can anybody here speak Spanish? "
         ];
-        this.difficulty = 5;
+        this.difficulty = calcDiff();
         this.stage = 0;
         this.text = this.array[this.stage];
         this.subLettersTyped = "";
@@ -115,21 +111,22 @@ class Game{
         userInput.value = "type here";
         this.wordCount = calculateWordCount(this.text);
         setVolume(getElement("volumeSlider").value/100);
-        this.update();
+        if(!text) this.update(); //can cause an error when using wikiText because it takes too long to load srcArray
         document.body.classList.remove("playing", "celebrate");
         document.body.classList.add("instructions");
         hide(playing, stats, celebrate, lose);
         show(instructions);
+        getElement("mistakes").innerHTML = this.difficulty;
         clearInterval(loseTimer);
         clearInterval(canvasTimer);
     }
-    update(){
+    update(){ //update elements related to the game
         getElement("prompt").innerHTML = `<span id='specialLetter'>${this.text.slice(0,1)}</span>${this.text.slice(1)}`; //put the first letter in a span to change its color with .css
         getElement("wordsTyped").innerHTML = this.totalWordsTyped;
         getElement("errors").innerHTML = this.totalErrors;
         getElement("errorBar").style.width = map(this.errors, 0, this.difficulty, 0, navbar.clientWidth)+"px";
         getElement("progressBar").style.width = map(this.wordsTyped, 0, this.wordCount, 0, navbar.clientWidth)+"px";
-        getElement("gameImg").src = this.srcArray[this.stage]//this.srcArray[this.stage+1] != null ? this.srcArray[this.stage+1] : this.srcArray[this.stage=0];
+        getElement("gameImg").src = this.srcArray[this.stage] //if srcArray is exists then set the src else check again
         if(this.errors >= this.difficulty){
             hide(playing);
             show(lose);
@@ -141,7 +138,7 @@ class Game{
         }
     }
 
-    checkInput(){
+    checkInput(){ 
         if(this.firstInput){
             this.firstInput = false; 
             this.startTime = new Date();
@@ -161,8 +158,7 @@ class Game{
                 if(this.stage == this.array.length){ //you win (show stats screen)
                     updateStats();
                 }else{ //continue with the next prompt
-                    if(wikiText != undefined) wikiText = this.text;
-                    this.text = wikiText || this.array[this.stage];
+                    this.text = this.array[this.stage];
                     this.wordCount = calculateWordCount(this.text);
                     this.wordsTyped = 0;
                     this.errors = 0;
@@ -180,8 +176,8 @@ class Game{
             userInput.value = "";
         }
         this.update();
-    }
-}
+    } //end of checkInput()
+} // end of Game
 
 class Circle { //represents a circle
     constructor(){
@@ -220,7 +216,7 @@ class Circle { //represents a circle
         ctx.fillStyle = `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
         ctx.fill();
     }
-}
+} //end of Circle
 
 class Vector { //handles all vector math
     constructor(x, y){
@@ -254,7 +250,7 @@ class Vector { //handles all vector math
     normalize(){
         return this.divide(this.length());
     }
-}
+} //end of Vector
 
 
 
@@ -280,15 +276,18 @@ canvas.onmousemove = (event) => {
     userY = event.offsetY;
 }
 
-getElement("settingsLink").onclick = () => show(getElement("settings"));
-for(let elt of Array.from(document.getElementsByClassName("close"))){
+getElement("settingsLink").onclick = () => show(getElement("settings")); //open settings
+for(let elt of Array.from(document.getElementsByClassName("close"))){  //hide settings and stats modal
     elt.onclick = () => hide(getElement("settings"), getElement("statsModal"));
 }
-for(let elt of Array.from(document.getElementsByClassName("statsBtn"))){
+for(let elt of Array.from(document.getElementsByClassName("statsBtn"))){ //show stats from storage
     elt.onclick = () => show(getElement("statsModal"));
+    getElement("storageTime").innerHTML = localStorage.getItem("timeToComplete");
+    getElement("storageWords").innerHTML = localStorage.getItem("wordsPerMin");
+    getElement("storageDiff").innerHTML = localStorage.getItem("difficulty");
 }
 
-getElement("startBtn").onclick = () => {
+getElement("startBtn").onclick = () => { //show the game screen
     hide(instructions);
     show(playing);
     document.body.classList.remove("instructions");
@@ -296,7 +295,7 @@ getElement("startBtn").onclick = () => {
     getElement("startSound").play();
 }
 
-getElement("celebrateBtn").onclick = () => {
+getElement("celebrateBtn").onclick = () => { //show the celebration screen
     document.body.classList.remove("playing");
     document.body.classList.add("celebrate");
     hide(stats);
@@ -305,7 +304,7 @@ getElement("celebrateBtn").onclick = () => {
     canvasTimer = setInterval(drawCanvas, 10);//drawCanvas every 10 milliseconds
 }
 
-for(let input of Array.from(document.querySelectorAll(".text-input"))){
+for(let input of Array.from(document.querySelectorAll(".text-input"))){  
     input.onclick = function() {this.value = ""}
     input.onmouseover = function() {this.style.fontWeight = "bold"}
     input.onmouseout = function() {this.style.fontWeight = "normal"}
@@ -316,13 +315,13 @@ getElement("resetCircles").onclick = () => resetCircles(parseInt(getElement("cir
 getElement("endBtn").onclick = () => updateStats();
 
 getElement("volumeSlider").onchange = function(){
-    getElement("volume").innerHTML = this.value;
+    getElement("volume").innerHTML = this.value; //lable next to slider
     setVolume(this.value/100);
     failSound.play();
 }
 
 getElement("sizeSlider").onchange = function(){
-    getElement("size").innerHTML = this.value;
+    getElement("size").innerHTML = this.value; 
     circleArray.forEach((circle) => circle.size = Math.floor(this.value/5));
 }
 
@@ -331,27 +330,39 @@ getElement("speedSlider").onchange = function(){
     circleArray.forEach((circle) => circle.startingVelocity = circle.startingVelocity.normalize().mult(this.value/10));
 }
 
-getElement("circleInput").oninput = function(){resetCircles(parseInt(this.value))}
+getElement("circleInput").oninput = function(){ resetCircles(parseInt(this.value))}
 
-getElement("promptInput").onchange = function() {
-    searchWiki(this.value);
-    document.body.classList.add("loading");
+for(let input of Array.from(document.getElementsByClassName("promptInput"))){ //all inputs that will search wiki
+    input.onchange = async function() {
+        document.body.classList.add("loading");
+        let result = await searchWiki(this.value); //returns an object with text and files
+        game = new Game(result.text, result.files);
+        document.body.classList.remove("loading");
+        hide(getElement("settings"));
+        getElement("startBtn").onclick();
+        getElement("endBtn").style.display = "inline-block";
+        setTimeout(() => game.update(), 150); //must wait for result to be fully saved 
+    }
+}
+
+for(let elt of Array.from(document.getElementsByClassName("reset"))){
+    elt.onclick = () => game = new Game();
 }
 
 userInput.oninput = () => game.checkInput();
 
-diffDropdown.onchange = () => {
+diffDropdown.onchange = function() {
     game = new Game();
-    game.difficulty = (function(){
-        switch(diffDropdown.value){
-            case "easy":
-                return 10;
-            case "normal":
-                return 5;
-            case "extreme":
-                return 2;
-        }
-    })();
+}
+function calcDiff(){ //seperate function so it can be called in the Game constructor
+    switch(diffDropdown.value){
+        case "easy":
+            return 10;
+        case "normal":
+            return 5;
+        case "extreme":
+            return 2;
+    }
 }
 
 function updateStats(){
@@ -363,9 +374,6 @@ function updateStats(){
     getElement("wordsPerMin").innerHTML = wordsPerMin;
     getElement("spanDiff").innerHTML = diffDropdown.value;
     storeStats(timeToComplete, wordsPerMin, diffDropdown.value);
-    getElement("storageTime").innerHTML = localStorage.getItem("timeToComplete");
-    getElement("storageWords").innerHTML = localStorage.getItem("wordsPerMin");
-    getElement("storageDiff").innerHTML = localStorage.getItem("difficulty");
 }
 
 function drawCanvas(){
@@ -442,7 +450,7 @@ function calculateWordCount(string){
     for(let letter of string){
         if(letter == " ") words++;
     }
-    return string[string.length-1] == " " ? words: words+1; //if space is last character of prompt, then return words, else return words plus 1
+    return string[string.length-1] == " " ? words : words+1; //if space is last character of prompt, then return words, else return words plus 1
 }
 
 function resetCircles(numOfCircles){
