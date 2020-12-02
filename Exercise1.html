@@ -5,12 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Twist the door knob</title>
-
+    <link href="navbar.css" rel="stylesheet" />
     <script src="libraries/p5.min.js"></script>
     <script src="libraries/p5.sound.min.js"></script>
     <script src="Exercise1.js"></script>
   </head>
 
   <body style="margin: 0px;">
+    <div class="navbar" id="nav">
+            <a href="home.html">Home</a>
+            <a href="#" id="settingsLink" >Settings</a>
+            <div class="dropdown">
+              <button class="dropbtn">Dropdown <i class="fa fa-caret-down"></i> </button>
+              <div class="dropdown-content">
+                <a href="Exercise1.html">Exercise 1</a>
+                <a href="Exercise2.html">Exercise 2</a>
+                <a href="Exercise3.html">Exercise 3</a>
+              </div>
+            </div> 
+            <a href="#" class="statsBtn">Player Stats</a>
+    </div>
   </body>
 </html>
