@@ -10,7 +10,6 @@ function preload(){
   chalk = loadImage('assets/pics/chalk.jpg');
   end = loadImage('assets/pics/end.JPG');
   yay = loadSound('assets/sounds/yay.mp3');
-  music = loadSound('assets/sounds/music.mp3');
   burger = loadSound('assets/sounds/burger.mp3');
   duck = loadSound('assets/sounds/duck.mp3');
 }
