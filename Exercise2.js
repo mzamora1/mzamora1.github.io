@@ -276,7 +276,10 @@ canvas.onmousemove = (event) => {
     userY = event.offsetY;
 }
 
-getElement("Instructions").onclick = () => getElement("instructSound").play();
+getElement("Instructions").onclick = () => {
+    getElement("instructSound").volume = 0.7;
+    getElement("instructSound").play();
+}
 
 getElement("settingsLink").onclick = () => show(getElement("settings")); //open settings
 for(let elt of Array.from(document.getElementsByClassName("close"))){  //hide settings and stats modal
