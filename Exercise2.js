@@ -270,18 +270,13 @@ window.onmousedown = function() {
 window.onmouseup = function() {
     mousePressed = false;
 }
-let first = true;
-window.onmousemove = () => {
-    if(first) {
-        getElement("instructSound").play();
-        first = false;
-    }
-}
     
 canvas.onmousemove = (event) => {
     userX = event.offsetX;
     userY = event.offsetY;
 }
+
+getElement("Instructions").onclick = () => getElement("instructSound").play();
 
 getElement("settingsLink").onclick = () => show(getElement("settings")); //open settings
 for(let elt of Array.from(document.getElementsByClassName("close"))){  //hide settings and stats modal
