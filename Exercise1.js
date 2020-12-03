@@ -15,8 +15,8 @@ let currentDoor = 0;
 
 class Point{
     constructor(x, y){
-        this.x = map(x, 0, 874, 0, window.innerWidth-16) || 0;
-        this.y = map(y, 0, 578, 0, window.innerHeight-66) || 0;
+        this.x = map(x, 0, 400, 0, window.innerWidth-16) || 0;
+        this.y = map(y, 0, 400, 0, window.innerHeight-66) || 0;
     }
 }
 function map(value, a, b, c, d){
