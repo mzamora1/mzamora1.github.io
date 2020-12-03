@@ -154,11 +154,13 @@ class Game{ //represents the typing game
             this.text = this.text.slice(1);
             this.subLettersTyped += lastInput;
             if(lastInput == " "){ //if space is pressed then a word has been typed correctly
+                getElement("typeSound").play();
                 this.wordsTyped++;
                 this.totalWordsTyped ++;
                 this.subLettersTyped = "";
             }
             if(this.text.length == 0){ //you completed a prompt
+                getElement("completeSound").play();
                 this.stage++;
                 if(this.stage == this.array.length){ //you win (show stats screen)
                     updateStats();
