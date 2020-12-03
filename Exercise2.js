@@ -97,7 +97,7 @@ class Game{ //represents the typing game
             // //one pic per prompt
              "Brothers and bildgerats, crewmen all, thar be some mighty fine booty of all manners on that thar ship. ",
             "But we canne jus go up to a ship like that like eh buncha fightin cocks, not with a ship ",
-            "with so many cannons on et. We ‘ave to do it all stealthy an sly-like, like a fox stealin ",
+            "with so many cannons on et. We have to do it all stealthy an sly-like, like a fox stealin ",
             "hens from a latrine. Wat we’re gonna do is a bodya picked men will go with me on ",
             "te tha ship, we’s gonna…snuggle the officers of the ship until they take a uh, a ",
             "long nappy-wappy, an then we’s gonna convince the resta the crew ta join us! ",
