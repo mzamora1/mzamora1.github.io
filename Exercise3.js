@@ -3,6 +3,7 @@ var gif_createpent, gif_loadpent;
 var gif_createhouse, gif_loadhouse;
 let instruc, end, chalk;
 let burger, duck, lit;
+let ins;
 let currentDrawing = 0;
 
 let completionGifs = [];
@@ -34,6 +35,7 @@ function preload(){
   burger = loadSound('assets/sounds/burger.mp3');
   duck = loadSound('assets/sounds/duck.mp3');
   lit = loadSound('assets/sounds/lit.mp3');
+  ins = loadSound("assets/sounds/T3.mps");
   instruc = createImg('assets/pics/intro.JPG','instructions');
   gif_createheart = createImg('assets/spinnyAnimation/gif_heart.gif','heart');
   gif_createpent = createImg('assets/spinnyAnimation/gif_pent.gif','pent');
@@ -238,7 +240,10 @@ function setup() {
   //music.loop();
   
   centerElement(instruc);
-  instruc.mouseClicked(() => instruc.hide());
+  instruc.mouseClicked(() => {
+    instruc.hide());
+    ins.play();
+  }
 
   completionGifs.forEach((obj) => {
     obj.text.hide();
