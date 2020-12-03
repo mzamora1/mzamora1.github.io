@@ -87,7 +87,12 @@ class Game{ //represents the typing game
             "https://cdn.discordapp.com/attachments/766444116913291277/779104793431113738/math_racist.jpg",
             "https://cdn.discordapp.com/attachments/766444116913291277/779104837161058314/talkin_pirates.jpg",
             "https://cdn.discordapp.com/attachments/766444116913291277/779104895302369310/pirates_fighting.jpg",
-            "https://cdn.discordapp.com/attachments/766444116913291277/779104949765668901/thinkin_pirate.jpg"
+            "https://cdn.discordapp.com/attachments/766444116913291277/779104949765668901/thinkin_pirate.jpg",
+            "https://cdn.discordapp.com/attachments/766444116913291277/783477551171239936/moar_pirates_talkin.jpg",
+            "https://cdn.discordapp.com/attachments/766444116913291277/783477595131346964/pirates_in_trouble.png",
+            "https://cdn.discordapp.com/attachments/766444116913291277/783477634549153822/pirate_stabin_time.jpg",
+            "https://cdn.discordapp.com/attachments/766444116913291277/783477796609589319/running_pirates.jpg",
+            "https://cdn.discordapp.com/attachments/766444116913291277/783477849964675073/screwed_pirate.jpg"
         ];
         this.array =  toArray(text) || [ //stores all the prompt text
             "Gentlemen, stealing is very unbecoming of those of such noble birth as ourselves. ",
@@ -98,9 +103,9 @@ class Game{ //represents the typing game
              "Brothers and bildgerats, crewmen all, thar be some mighty fine booty of all manners on that thar ship. ",
             "But we canne jus go up to a ship like that like eh buncha fightin cocks, not with a ship ",
             "with so many cannons on et. We have to do it all stealthy an sly-like, like a fox stealin ",
-            "hens from a latrine. Wat we’re gonna do is a bodya picked men will go with me on ",
-            "te tha ship, we’s gonna…snuggle the officers of the ship until they take a uh, a ",
-            "long nappy-wappy, an then we’s gonna convince the resta the crew ta join us! ",
+            "hens from a latrine. Wat we're gonna do is a bodya picked men will go with me on ",
+            "te tha ship, we's gonna…snuggle the officers of the ship until they take a uh, a ",
+            "long nappy-wappy, an then we's gonna convince the resta the crew ta join us! ",
             "Can anybody here speak Spanish? "
         ];
         this.difficulty = calcDiff();
@@ -112,7 +117,7 @@ class Game{ //represents the typing game
         this.wordCount = calculateWordCount(this.text);
         setVolume(getElement("volumeSlider").value/100);
         if(!text) this.update(); //can cause an error when using wikiText because it takes too long to load srcArray
-        document.body.classList.remove("playing", "celebrate");
+        document.body.classList.remove("playing", "celebrate"); //changes background color and page styles
         document.body.classList.add("instructions");
         hide(playing, stats, celebrate, lose);
         show(instructions);
