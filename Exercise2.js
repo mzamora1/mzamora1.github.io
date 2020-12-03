@@ -71,7 +71,7 @@ async function searchWiki(input){ //returns an object with a string for prompt a
         let text = await searchContent(title);
         let files = await searchImages(title);
         return {text, files};
-    }
+    }else return false;
 }
 
 
@@ -341,12 +341,14 @@ for(let input of Array.from(document.getElementsByClassName("promptInput"))){ //
     input.onchange = async function() {
         document.body.classList.add("loading");
         let result = await searchWiki(this.value); //returns an object with text and files
-        game = new Game(result.text, result.files);
+        if(result){
+            game = new Game(result.text, result.files);
+            hide(getElement("settings"));
+            getElement("startBtn").onclick();
+            getElement("endBtn").style.display = "inline-block";
+            setTimeout(() => game.update(), 500); //must wait for result to be fully saved 
+        }else alert("Couldnt find that page. \n Enter another topic.");
         document.body.classList.remove("loading");
-        hide(getElement("settings"));
-        getElement("startBtn").onclick();
-        getElement("endBtn").style.display = "inline-block";
-        setTimeout(() => game.update(), 150); //must wait for result to be fully saved 
     }
 }
 
