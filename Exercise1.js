@@ -106,7 +106,7 @@ function isInBounds(size){
           top: boundaryPoints[currentDoor][i].y - size,
           bottom: boundaryPoints[currentDoor][i].y + size
         }
-        rect(boundary.left, boundary.top, size*2); //for testing purposes
+        //rect(boundary.left, boundary.top, size*2); //for testing purposes
         if(mouseX > boundary.left && mouseX < boundary.right && mouseY > boundary.top && mouseY < boundary.bottom){
             if (!visitedboundaries.includes(boundaryPoints[currentDoor][i])){
                 visitedboundaries.push(boundaryPoints[currentDoor][i]);
