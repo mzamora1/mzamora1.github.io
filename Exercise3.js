@@ -241,9 +241,9 @@ function setup() {
   
   centerElement(instruc);
   instruc.mouseClicked(() => {
-    instruc.hide());
+    instruc.hide();
     ins.play();
-  }
+  });
 
   completionGifs.forEach((obj) => {
     obj.text.hide();
