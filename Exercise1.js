@@ -24,7 +24,7 @@ function map(value, a, b, c, d){
     return c + value * (d - c); // then map it from (0..1) to (c..d) and return it
 }
 function preload(){
-    ins1 = loadSound('assets/sounds/T1|1.mp3');
+    ins1 = loadSound('assets/sounds/T1I1.mp3');
     ins2 = loadSound('assets/sounds/Twist.mp3');
     img = loadImage('assets/pics/House.png');
     bg2 = loadImage('assets/pics/bg2.png');
