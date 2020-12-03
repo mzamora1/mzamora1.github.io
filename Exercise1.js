@@ -36,7 +36,7 @@ function setup() {
     button.size(100, 30);
     button.position(width/2 - button.size().width/2, height/2+150);
     button.mouseClicked(() => {
-        buttonhide();
+        //buttonhide();
         ins1.play();
     });
     door1 = [
