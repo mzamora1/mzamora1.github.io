@@ -186,7 +186,6 @@ class Game{ //represents the typing game
 
 class Circle { //represents a circle
     constructor(){
-        this.circle = this;
         this.startingVelocity = (new Vector()).randomVector().normalize().mult(getElement("speedSlider").value/10);//random direction with speed of 3
         this.position = new Vector(canvas.width/2, canvas.height/2); //starting position is center of canvas
         this.velocity = this.startingVelocity //calculate random inital starting velocity
@@ -261,7 +260,7 @@ class Vector { //handles all vector math
 
 window.onresize = () => { //resize the canvas dynamically
     canvas.width = document.body.clientWidth; 
-    canvas.height =  document.body.clientHeight + 70;
+    canvas.height =  document.body.clientHeight;
     getElement("resetCircles").style.top = canvas.height/2 +100 + "px";
     getElement("resetCircles").style.left = navbar.clientWidth/2 - 100+"px";
 }
@@ -269,12 +268,8 @@ window.onload = () => {
     game = new Game();
     window.onresize();//set canvas size
 }
-window.onmousedown = function() { 
-    mousePressed = true;
-}
-window.onmouseup = function() {
-    mousePressed = false;
-}
+window.onmousedown = () => mousePressed = true;
+window.onmouseup = () => mousePressed = false;
     
 canvas.onmousemove = (event) => {
     userX = event.offsetX;
@@ -290,6 +285,7 @@ getElement("settingsLink").onclick = () => show(getElement("settings")); //open 
 for(let elt of Array.from(document.getElementsByClassName("close"))){  //hide settings and stats modal
     elt.onclick = () => hide(getElement("settings"), getElement("statsModal"));
 }
+
 for(let elt of Array.from(document.getElementsByClassName("statsBtn"))){ //show stats from storage
     elt.onclick = () => show(getElement("statsModal"));
     getElement("storageTime").innerHTML = localStorage.getItem("timeToComplete");
