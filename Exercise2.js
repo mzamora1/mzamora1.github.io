@@ -263,7 +263,6 @@ window.onresize = () => { //resize the canvas dynamically
 window.onload = () => {
     game = new Game();
     window.onresize();//set canvas size
-    getElement("instructSound").play();
 }
 window.onmousedown = function() { 
     mousePressed = true;
@@ -271,7 +270,14 @@ window.onmousedown = function() {
 window.onmouseup = function() {
     mousePressed = false;
 }
-
+let first = true;
+window.onmousemove = () => {
+    if(first) {
+        getElement("instructSound").play();
+        first = false;
+    }
+}
+    
 canvas.onmousemove = (event) => {
     userX = event.offsetX;
     userY = event.offsetY;
