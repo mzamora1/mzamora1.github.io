@@ -28,6 +28,14 @@ button:hover{
     transition: all 0.3s ease 0s;
     cursor: pointer;
 }
+#Instructions:hover{
+    color: #404040;
+    font-weight: 700;
+    letter-spacing: 8px;
+    background: white;
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+}
 img{
     padding-left: 50px;
 }
