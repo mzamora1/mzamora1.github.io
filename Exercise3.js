@@ -5,7 +5,6 @@ let instruc, end, chalk;
 let burger, duck, lit;
 let ins;
 let currentDrawing = 0;
-
 let completionGifs = [];
 
 class Point{
