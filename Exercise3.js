@@ -34,7 +34,7 @@ function preload(){
   burger = loadSound('assets/sounds/burger.mp3');
   duck = loadSound('assets/sounds/duck.mp3');
   lit = loadSound('assets/sounds/lit.mp3');
-  ins = loadSound("assets/sounds/T3.mps");
+  ins = loadSound("assets/sounds/T3.mp3");
   instruc = createImg('assets/pics/intro.JPG','instructions');
   gif_createheart = createImg('assets/spinnyAnimation/gif_heart.gif','heart');
   gif_createpent = createImg('assets/spinnyAnimation/gif_pent.gif','pent');
