@@ -2,8 +2,8 @@ var gif_createheart, gif_loadheart;
 var gif_createpent, gif_loadpent;
 var gif_createhouse, gif_loadhouse;
 let instruc, end, chalk;
-let burger, duck, yay;
-let canvas, currentDrawing = 0;
+let burger, duck;
+let currentDrawing = 0;
 
 let completionGifs = [];
 
@@ -32,8 +32,8 @@ function preload(){
   end = loadImage('assets/pics/end.JPG');
   yay = loadSound('assets/sounds/yay.mp3');
   burger = loadSound('assets/sounds/burger.mp3');
-  duck = loadSound('assets/sounds/duck.mp3')
-  instruc = createImg('assets/pics/intro.JPG','instructions');
+  duck = loadSound('assets/sounds/duck.mp3');
+  instruc = createImg('assets/pics/intro.jpg','instructions');
   gif_createheart = createImg('assets/spinnyAnimation/gif_heart.gif','heart');
   gif_createpent = createImg('assets/spinnyAnimation/gif_pent.gif','pent');
   gif_createhouse = createImg('assets/spinnyAnimation/gif_house.gif','house');
@@ -230,10 +230,9 @@ function setup() {
   canvas = createCanvas(windowWidth-16, (windowHeight-66));
   textAlign(CENTER)
   completionGifs = [
-    new gifContainer("heart", gif_createheart, burger), 
-    new gifContainer("pentagram", gif_createpent, duck), 
-    new gifContainer("house", gif_createhouse, burger), 
-    
+    new gifContainer(createElement("h2", "heart"), gif_createheart, burger), 
+    new gifContainer(createElement("h2", "pentagram"), gif_createpent, duck), 
+    new gifContainer(createElement("h2", "house"), gif_createhouse, burger), 
   ];
   //music.loop();
   
@@ -241,7 +240,8 @@ function setup() {
   instruc.mouseClicked(() => instruc.hide());
 
   completionGifs.forEach((obj) => {
-    obj.sound.play();
+    obj.text.hide();
+    obj.text.position(width/2, (height/2)+200);
     centerElement(obj.gif_create);
     obj.gif_create.hide();
     obj.gif_create.mouseClicked(function() {
@@ -249,32 +249,34 @@ function setup() {
       clear(); background(chalk);
     });
   })
-
 }// end of setup()
 
 function draw() { 
   textSize(32); textAlign(CENTER);
-  text(completionGifs[currentDrawing].text, width/2, height/2 + 150)
+  completionGifs[currentDrawing] ? completionGifs[currentDrawing].text.hide(): completionGifs[currentDrawing-1].text.hide();
 
-  drawingArray[currentDrawing].forEach((point) => {
+  drawingArray[currentDrawing] ? drawingArray[currentDrawing].forEach((point) => {
     point.visited ? fill(0, 255, 0) : fill(255, 0, 0); //if visited then fill green, else fill red
     circle(point.x, point.y, 4);
-  });
+  }):
   
   stroke(200);
-  if (mouseIsPressed === true) {
-    line(mouseX, mouseY, pmouseX, pmouseY);
+  if (mouseIsPressed === true || !drawingArray[currentDrawing]) {
+    if (mouseIsPressed)line(mouseX, mouseY, pmouseX, pmouseY);
     if(checkAllBoundaries()){
       clear(); background(0);
       textSize(20); fill(255);
       text('Click on the GIF to Continue',width/2, height/2 +170);
-      completionGifs[currentDrawing].gif_create.show()
+      completionGifs[currentDrawing-1].gif_create.show();
+      if (currentDrawing < completionGifs.length-1) completionGifs[currentDrawing].text.hide();
+      completionGifs[currentDrawing-1].sound.play();
     }
-  }
+  } else if (completionGifs[currentDrawing])completionGifs[currentDrawing].text.show();
 }// end of draw()
 
 
 function checkAllBoundaries(){
+  if (drawingArray[currentDrawing]){ 
   let inAnyBoundary = false;
   for(let i = 0; i < drawingArray[currentDrawing].length; i++){
     let point = drawingArray[currentDrawing][i];
@@ -289,7 +291,7 @@ function checkAllBoundaries(){
       }
     }
   }
-  
+
   if (drawingArray[currentDrawing].every((point) => point.visited)){
     currentDrawing++;
     clear(); background(chalk);
@@ -297,9 +299,16 @@ function checkAllBoundaries(){
     return true;
   }
 
+  if (currentDrawing == drawingArray.length){
+    image(end, (width/2)-150, (height/2)-100);
+    console.log("you win");
+  } else completionGifs[currentDrawing].text.hide();
+
   if(!inAnyBoundary){ 
     clear(); background(chalk);
+
     drawingArray[currentDrawing].forEach((point) => point.visited = false);
   }
   
+} else image(end, (width/2)-150, (height/2)-100);
 }// end of checkAllBoundaries()
