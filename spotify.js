@@ -12,7 +12,7 @@ let hide = (...elements) => {
 
 let afterHash = location.hash.substring(1); //get hash value
 if(!afterHash.includes("access_token")){//if there is not an access token in hash then redirect to login page
-    window.location.href = "https://accounts.spotify.com/authorize?client_id=b48ae6f543f941a5be1084b45ed74b13&redirect_uri=http://127.0.0.1:5500/spotify.html&scope=user-top-read&response_type=token";
+    window.location.href = "https://accounts.spotify.com/authorize?client_id=b48ae6f543f941a5be1084b45ed74b13&redirect_uri=https://mzamora1.github.io/spotify.html&scope=user-top-read&response_type=token";
 }
 let hashes = afterHash.split("&").map((hash) => hash.split("="))//split hash string into key, value pairs
 let access_token = hashes[0][1];
