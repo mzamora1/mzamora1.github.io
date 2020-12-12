@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">  
+<title>Spotify User Data</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="spotify.js" type="module"></script>
+    
+    <style>
+      *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Bebas Neue', cursive;
+      }
+      
+      body{
+        width: 100vw;
+        height: 100vh;
+        overflow-x: hidden;
+      }
+      header{
+        position: absolute;
+        display: flex;
+        height: 130px;
+        width: 100vw;
+        top: 0;
+        justify-content: center;
+        align-items: center;
+        padding: 0 20% 0 100px;
+        background-color: #191414;/* Spotify black */
+      }
+      header > div{
+        font-family: 'Inter', sans-serif;;
+        font-size: 25px;
+        font-weight: 800;
+        position: absolute;
+        left: 100px;
+        color: #1DB954; /* Spotify green */
+      }
+      header nav{
+        display: flex;
+        width: 720px;
+        justify-content: space-between;
+        text-align: center;
+        min-width: 550px;
+        margin-left: 300px;
+      }
+      header nav a{
+        font-size: 20px;
+        font-weight: 400;
+        text-decoration: none;
+        color: #ffffff;
+      }
+      section{
+        height: 100vh;
+      }
+      section .contentWrapper{
+        align-items: center;
+        position: relative;
+        top: 130px;
+        width: 100vw;
+      }
+      section .contentWrapper p{
+        text-align: center;
+        font-size: 30px;
+        /*position: relative;
+        margin-top: 20px;
+        margin-left: 20px;
+        */
+      }
+      section .contentWrapper h2{
+        text-align: center;
+        font-size: 50px;
+      }
+      section .contentWrapper .canvasContainer{
+        position: relative;
+        margin-top: 20px;
+        margin-right: 20px;
+        padding-bottom: 50px;
+      }
+      
+    </style>
+    
+  </head>
+
+  <body style="background-color: white;">
+    
+    <header>
+      <div>Spotify Data</div>
+
+      <nav>
+        <a href="#" id="topSongsBtn">Top Songs</a>
+        <a href="#" id="topArtistsBtn">Top Artists</a>
+        <a href="#" id="topGenresBtn">Top Genres</a>
+        <a href="#" id="myAccountBtn">My Account</a>
+      </nav>
+    </header>
+    
+
+    <section id="topSongs">
+      <div class="contentWrapper" >
+        
+        <div class="canvasContainer" >
+          <h2>Your Top 20 Songs Ranked By Popularity </h2>
+          <canvas id="canvas" ></canvas>
+        </div>
+      
+      </div>
+    </section>
+    
+    <section id="topArtists">
+      <div class="contentWrapper">
+        
+        <div class="canvasContainer" >
+          <h2>Your Top 20 Artists Ranked By Popularity </h2>
+          <canvas id="topArtistcanvas" ></canvas>
+        </div>
+      
+      </div>
+    </section>
+
+    <section id="topGenres">
+      <div class="contentWrapper">
+        
+        <div class="canvasContainer" >
+          <h2>Your Top Genres Ranked By Popularity </h2>
+          <canvas id="topGenrecanvas" ></canvas>
+        </div>
+      
+      </div>
+    </section>
+
+    <section id="myAccount">
+      <div class="contentWrapper">
+        
+        <div class="canvasContainer" >
+          <h2>Your Top 20 Artists Ranked By Popularity </h2>
+          <canvas id="myAccountcanvas" ></canvas>
+        </div>
+      
+      </div>
+    </section>
+    
+  </body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet"> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous"></script>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Bebas Neue', cursive;
+            }
+            body{
+                width: 100vw;
+                height: 100vh;
+                overflow-x: hidden;
+                background-color: #191414;
+            }
+            #contentWrapper {
+                position: absolute;
+                top: 30%;
+                left: 20%;
+            }
+            #contentWrapper h1{
+                font-size: 100px;
+                color: white;
+            }
+            #contentWrapper button{
+                width: 200px;
+                font-size: 40px;
+                border: none;
+                background: #404040;
+                color: #ffffff;
+                font-weight: 100;
+                padding: 20px;
+                text-transform: uppercase;
+                border-radius: 6px;
+                display: inline-block;
+                transition: all 0.3s ease 0s;
+            }
+            #contentWrapper button:hover{
+                color: #404040;
+                font-weight: 700;
+                letter-spacing: 3px;
+                background: white;
+                transition: all 0.3s ease 0s;
+                cursor: pointer;
+            }
+            #imgContainer{
+                width: 100vw;
+                position: absolute;
+                bottom: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div id="contentWrapper">
+            <h1>Spotify Data</h1>
+            <button id="loginBtn">Login</button>
+        </div>
+            
+        <div id="imgContainer">
+
+        </div>
+        
+        <script >
+            let bubbles = []
+            for(let i = 0; i < 15; i++){ //create bubbles
+                let newBubble = document.createElement("img");
+                newBubble.id = "logo"+i;
+                newBubble.src = "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg";
+                newBubble.style.left = Math.random() * window.innerWidth + "px";
+                document.getElementById("imgContainer").appendChild(newBubble);
+                bubbles.push(newBubble);
+                console.log(newBubble)
+            }
+            let bubblesAnime = anime({ //animate bubbles
+                targets: bubbles,
+                translateY: -1000,
+                delay: anime.stagger(500, {from: "center"}),
+                duration: 4000,
+                autoplay: true,
+                direction: 'alternate',
+                easing: 'easeInOutQuad'
+            })
+
+            for(elt of Array.from(document.querySelectorAll("img"))){
+                elt.onclick = bubblesAnime.play;
+            }
+            let loginBtn = document.getElementById("loginBtn");
+            loginBtn.onclick = () => {
+                window.location.href = "https://accounts.spotify.com/authorize?client_id=b48ae6f543f941a5be1084b45ed74b13&redirect_uri=http://127.0.0.1:5500/spotify.html&scope=user-top-read&response_type=token";
+            }
+            
+        </script>
+    </body>
+</html>
