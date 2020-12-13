@@ -22,6 +22,7 @@ let canvas = document.getElementById("canvas")
 
 //let colors = ["rgba(255,0,0,0.5)", "rgba(255, 247, 0, 0.5)", "rgba(51, 255, 0, 0.5)", "rgba(0, 195, 255, 0.5)", "rgba(144, 0, 255, 0.5)"]
 window.onload = () => {
+    window.onresize();
     hide(artistSection, genreSection, myAccountSection);
 }
 document.getElementById("topArtistsBtn").onclick = () => {
@@ -41,10 +42,22 @@ document.getElementById("myAccountBtn").onclick = () => {
     hide(songSection, artistSection , genreSection);
 }
 
+function map(value, a, b, c, d){
+    value = (value - a) / (b - a); // first map value from (a..b) to (0..1)
+    return Math.round(c + value * (d - c)); // then map it from (0..1) to (c..d) and return it
+}
 
-
+//document.getElementById("canvas").height = window.innerHeight
 
 Chart.defaults.global.defaultFontFamily = "Bebas Neue";
+let defaultFontSize = () => map(window.innerWidth, 0, 375, 0, 7);
+Chart.defaults.global.defaultFontSize = defaultFontSize();
+window.onresize = () => {
+    Chart.defaults.global.defaultFontSize = defaultFontSize();
+    console.log(defaultFontSize())
+}
+console.log(defaultFontSize())
+console.log(window.innerWidth)
 
 async function PopularityChart(what, canvasContext){
     let {popularityData, artistNames, colors} = await getTop(what);
@@ -54,6 +67,7 @@ async function PopularityChart(what, canvasContext){
             datasets: [{
                 data: popularityData,//artist popularity
                 backgroundColor: colors,
+                barThickness: "flex"
             }],
             labels: artistNames, //artist names
         },
@@ -66,14 +80,15 @@ async function PopularityChart(what, canvasContext){
                     ticks: {
                         min: 0,
                         max: 100,
-                        fontSize: 32,
+                        //fontSize: 7,
                         fontColor: "#000",
+                        padding: 15
                     
                     }
                 }],
                 xAxes: [{
                     ticks: {
-                        fontSize: 20
+                        //fontSize: 20
                     }
                 }]
             },
@@ -83,7 +98,7 @@ async function PopularityChart(what, canvasContext){
                 fontSize: 50 
             },
             tooltips: {
-                titleFontSize: 20
+                //titleFontSize: 20
             }
         }
     })
@@ -117,99 +132,6 @@ async function getTop(what){//what == "artists" or "tracks"
         artistNames.push(artist.name);
         colors.push(`rgba(${Math.random()*256}, ${Math.random()*256}, ${Math.random()*256}, 0.7)`)
     });
-    console.log(artists);
+    //console.log(artists);
     return {popularityData, artistNames, colors}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//let response = await fetch("https://api.spotify.com/v1/me/top/tracks?time_range=long_term", {
-
-
-class Genre{
-    constructor(genre, count){
-        this.genre = genre;
-        this.count = count;
-    }
-    increase(){
-        console.log("increase!")
-        this.count++;
-    }
-}
-
-//for each artist, search genres 
-async function getTopGenres(){
-    let response = await fetch(`https://api.spotify.com/v1/me/top/artists`, {
-        method: "GET",
-        headers: {
-            "Authorization": "Bearer " + access_token,
-        }
-    })
-    let data = await response.json();
-    let artists = data["items"];
-    let genres = [];
-    artists.forEach(artist => {
-        artist.genres.forEach(genre => {
-           //console.log(typeof genre)
-            genres.push(genre);
-        })
-    })
-    console.log(find(genres[3].genre, genres, 0))
-    console.log(genres)
-    
-}
-getTopGenres();
-
-
-function find(string, array, count){
-    
-    let specialElt = array.find(element => element.genre == string);
-    //count++;
-    //console.log(count)
-    if(specialElt != undefined){
-        array = array.filter(elt => elt != specialElt);
-        console.log(specialElt + " ****** " + string);
-
-        return find(string, array, count+=1);
-    }else {
-        console.log(count);
-        return count;
-    }
 }
