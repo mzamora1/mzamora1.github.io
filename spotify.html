@@ -21,100 +21,146 @@
         font-family: 'Bebas Neue', cursive;
       }
       
+      /* Default Style */
       body{
         width: 100vw;
         height: 100vh;
         overflow-x: hidden;
       }
+      header{
+        position: fixed;
+        top: 0;
+        z-index: 2;
+        height: 9%;
+        width: 100%;
+        background-color: #191414;/* Spotify black */
+      }
+      header div{
+        font-family: 'Inter', sans-serif;;
+        font-size: 2em;
+        font-weight: 800;
+        color: #1DB954; /* Spotify green */
+      }
+      header nav ul{
+        list-style: none;
+        display: flex;
+        width: 50vw;
+        justify-content: space-around;
+      }
+      header nav ul li a{
+        font-size: 1.3em;
+        text-decoration: none;
+        color: #ffffff;
+      }
+      section{
+        width: 100%;
+        height: 100%;
+      }      
+      section .contentWrapper{
+        text-align: center;
+        position: relative;
+        top: 10%;
+        
+      }
+      section .contentWrapper ol{
+        list-style-position: inside;
+        line-height: 3em;
+        margin: 2em 0.2em;
+      }
+      section .contentWrapper ol li{
+        font-size: 1.5em;
+      }
+      section .contentWrapper .canvasContainer{
+        margin-bottom: 3em;
+      }
       
 
+      /* For bigger devices */
       @media only screen and (min-width: 968px){
         header{
-          position: absolute;
           display: flex;
-          height: 130px;
-          width: 100vw;
-          top: 0;
           justify-content: center;
           align-items: center;
-          padding: 0 20% 0 100px;
-          background-color: #191414;/* Spotify black */
         }
-        header > div{
-          font-family: 'Inter', sans-serif;;
-          font-size: 25px;
-          font-weight: 800;
+        header div{
           position: absolute;
-          left: 100px;
-          color: #1DB954; /* Spotify green */
+          left: 50px;
         }
-        header nav{
-          display: flex;
-          width: 720px;
-          justify-content: space-between;
-          text-align: center;
-          min-width: 550px;
-          margin-left: 300px;
-        }
-        header nav a{
-          font-size: 20px;
-          font-weight: 400;
-          text-decoration: none;
-          color: #ffffff;
-        }
-        section{
-          height: 100vh;
-        }
-        section .contentWrapper{
-          align-items: center;
-          position: relative;
-          top: 130px;
-          width: 100vw;
-        }
-        section .contentWrapper p{
-          text-align: center;
-          font-size: 30px;
-          /*position: relative;
-          margin-top: 20px;
-          margin-left: 20px;
-          */
+        header .hamburger{
+          display: none;
         }
         section .contentWrapper h2{
-          text-align: center;
-          font-size: 50px;
-        }
-        section .contentWrapper .canvasContainer{
-          position: relative;
-          margin-top: 20px;
-          margin-right: 20px;
-          padding-bottom: 50px;
+          font-size: 3em;
         }
       }
 
+      /* For smaller devices */
       @media only screen and (max-width: 968px){
         header{
-          display: block;
-          position: relative;
-          text-align: center;
+          height: 80px;
+        }
+        header .hamburger{
+          position: absolute;
+          margin-top: 1em;
+          margin-left: 1em;
+          cursor: pointer;
+          z-index: 3;
+        }
+        .line{
+          width: 30px;
+          height: 3px;
+          background-color: white;
+          margin-top: 5px;
+          transition: all .8s ease-in;
+        }
+        .line.rotateLeft{
+          margin-bottom: -.1em;
+          transform: rotate(45deg);
+        }
+        .line.rotateRight{
+          margin-top: -.07em;
+          transform: rotate(-45deg);
+        }
+        .line.remove{
+          opacity: 0;
+          transition: all 0s;
+        }
+        header #title{
+          float: right;
+          margin-top: .8em;
+          margin-right: 1em;
+        }
+        .links{
+          position: fixed;
           background-color: #191414;
-          font-size: 20px;
+          width: 100%;
+          height: 100%;
+          margin: 5px auto;
+          justify-content: center;
+          flex-direction: column;
+          z-index: 2;
+          clip-path: circle(10% at 90% -10%);
+          -webkit-clip-path: circle(10% at 10% -10%);
+          transition: all .8s ease-in;
         }
-        header div{
-          font-size: 30px;
-          color:#1DB954;
+        .links.open{
+          opacity: 1;
+          clip-path: circle(130% at 90% -10%);
+          -webkit-clip-path: circle(150% at 10% -10%);
         }
-        header nav{
-          margin-left: 0;
+        header nav ul li{
+          margin: 10% auto;
         }
-        header nav a{
-          display: block;
-          padding: 10px 0;
-          text-decoration: none;
-          color: white;
+        header nav ul li a{
+          color: #1DB954;
         }
         section .contentWrapper{
-          text-align: center;
+          top: 100px;
         }
+        section .contentWrapper h2{
+          font-size: 35px;
+        }
+      
         
       }
       
@@ -125,44 +171,59 @@
   <body style="background-color: white;">
     
     <header>
-      <div>Spotify Data</div>
+      <div id="title">Spotify Data</div>
+
+      <div class="hamburger" id="hamburger">
+        <div class="line" id="rotateLeft"></div>
+        <div class="line" id="remove"></div>
+        <div class="line" id="rotateRight"></div>
+      </div>
 
       <nav>
-        <a href="#" id="topSongsBtn">Top Songs</a>
-        <a href="#" id="topArtistsBtn">Top Artists</a>
-        <a href="#" id="topGenresBtn">Top Genres</a>
-        <a href="#" id="myAccountBtn">My Account</a>
+        <ul class="links">
+          <li><a href="#" id="topSongsBtn">Top Songs</a> </li>
+          <li><a href="#" id="topArtistsBtn">Top Artists</a> </li>
+          <li><a href="#" id="topGenresBtn">Top Genres</a> </li>
+          <li><a href="#" id="myAccountBtn">My Account</a></li>
+        </ul>
       </nav>
     </header>
     
 
     <section id="topSongs">
       <div class="contentWrapper" >
-        
+        <h2>Your Top 20 Songs Ranked By Popularity </h2>
         <div class="canvasContainer" >
-          <h2>Your Top 20 Songs Ranked By Popularity </h2>
           <canvas id="canvas"></canvas>
         </div>
-      
+
+        <h2>Your Top 20 Songs In Order</h2>
+        <ol class="list" type="1">
+          
+        </ol>
+
       </div>
     </section>
     
     <section id="topArtists">
       <div class="contentWrapper">
-        
+        <h2>Your Top 20 Artists Ranked By Popularity </h2>
         <div class="canvasContainer" >
-          <h2>Your Top 20 Artists Ranked By Popularity </h2>
           <canvas id="topArtistcanvas" ></canvas>
         </div>
+
+        <h2>Your Top 20 Artists In Order</h2>
+        <ol class="list" type="1">
+          
+        </ol>
       
       </div>
     </section>
 
     <section id="topGenres">
       <div class="contentWrapper">
-        
+        <h2>Your Top Genres Ranked By Popularity </h2>
         <div class="canvasContainer" >
-          <h2>Your Top Genres Ranked By Popularity </h2>
           <canvas id="topGenrecanvas" ></canvas>
         </div>
       
@@ -171,9 +232,8 @@
 
     <section id="myAccount">
       <div class="contentWrapper">
-        
+        <h2>Your Top 20 Artists Ranked By Popularity </h2>
         <div class="canvasContainer" >
-          <h2>Your Top 20 Artists Ranked By Popularity </h2>
           <canvas id="myAccountcanvas" ></canvas>
         </div>
       
