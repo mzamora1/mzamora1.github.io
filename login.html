@@ -37,11 +37,6 @@
                 max-width: 500px;
                 min-width: 300px;
             }
-            #contentWrapper h1{
-                font-size: 10vw;
-                
-                color: white;
-            }
             #contentWrapper button{
                 width: 200px;
                 font-size: 40px;
@@ -71,7 +66,7 @@
             img{
                 position: absolute;
                 width: 5vw;
-                z-index: -1;
+                z-index: -2;
             }
 
             @media only screen and (max-width: 600px){
@@ -87,7 +82,7 @@
         <![endif]-->
         <div id="contentWrapper">
             <div id="svgWrapper">
-                <svg id="spot" viewbox="0 0 500 200"style="" preserveAspectRatio="xMinYMin meet" fill="none">
+                <svg id="spot" viewbox="0 0 500 200"style="" preserveAspectRatio="xMinYMin meet" fill="none"> 
                     <mask id="path-1-outside-1" maskUnits="userSpaceOnUse" x="0.639999" y="0.799988" width="489" height="89" fill="black">
                         <rect fill="white" x="0.639999" y="0.799988" width="489" height="89"/>
                         <path d="M21.08 88.2C14.68 88.2 9.84 86.4 6.56 82.8C3.28 79.12 1.64 73.88 1.64 67.08V62.28H14.12V68.04C14.12 73.48 16.4 76.2 20.96 76.2C23.2 76.2 24.88 75.56 26 74.28C27.2 72.92 27.8 70.76 27.8 67.8C27.8 64.28 27 61.2 25.4 58.56C23.8 55.84 20.84 52.6 16.52 48.84C11.08 44.04 7.28 39.72 5.12 35.88C2.96 31.96 1.88 27.56 1.88 22.68C1.88 16.04 3.56 10.92 6.92 7.31999C10.28 3.63999 15.16 1.79999 21.56 1.79999C27.88 1.79999 32.64 3.63999 35.84 7.31999C39.12 10.92 40.76 16.12 40.76 22.92V26.4H28.28V22.08C28.28 19.2 27.72 17.12 26.6 15.84C25.48 14.48 23.84 13.8 21.68 13.8C17.28 13.8 15.08 16.48 15.08 21.84C15.08 24.88 15.88 27.72 17.48 30.36C19.16 33 22.16 36.2 26.48 39.96C32 44.76 35.8 49.12 37.88 53.04C39.96 56.96 41 61.56 41 66.84C41 73.72 39.28 79 35.84 82.68C32.48 86.36 27.56 88.2 21.08 88.2Z"/>
@@ -119,13 +114,14 @@
         </div>
             
         <div id="imgContainer">
-
+            <!-- bubbles will be placed here -->
         </div>
         
         <script >
             let loginBtn = document.getElementById("loginBtn");
             loginBtn.onclick = () => {
-                window.location.href = "https://accounts.spotify.com/authorize?client_id=b48ae6f543f941a5be1084b45ed74b13&redirect_uri=https://mzamora1.github.io/spotify.html&scope=user-top-read&response_type=token";
+                // window.location.href = "https://accounts.spotify.com/authorize?client_id=b48ae6f543f941a5be1084b45ed74b13&redirect_uri=https://mzamora1.github.io/spotify.html&scope=user-top-read&response_type=token";
+                window.location.href = "https://accounts.spotify.com/authorize?client_id=b48ae6f543f941a5be1084b45ed74b13&redirect_uri=http://127.0.0.1:5500/spotify.html&scope=user-top-read&response_type=token";
             }
 
             let bubbles = []
@@ -141,14 +137,15 @@
                 targets: bubbles,
                 translateY: "-110vh",
                 opacity: [0, 1],
+                width: ["2vw", "6vw"],
                 delay: anime.stagger(500),
-                duration: 2000,
+                duration: 3000,
                 autoplay: false,
                 easing: 'easeInQuad',
                 loop: true,
                 endDelay: -500
             })
-            setTimeout(() => {
+            setTimeout(() => { //play it after a slight delay
                 bubblesAnime.play();
             }, 300)
 
