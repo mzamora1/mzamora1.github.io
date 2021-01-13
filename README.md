@@ -13,3 +13,5 @@ Some exercises will run in the p5.editor but some wont
 
 
 [**Spotify Data**](https://mzamora1.github.io/Spotify-Data/)
+
+[**Sorting Visualization**](https://mzamora1.github.io/Sorting-Visualization/)
