@@ -5,7 +5,7 @@ Some exercises will run in the p5.editor but some wont
 
 [**Run the program**](https://mzamora1.github.io/home.html)
 
-[See the code](https://github.com/mzamora1/mzamora1.github.io)
+[See the code](https://github.com/mzamora1/)
  
 
 [**Spotify Data**](https://mzamora1.github.io/Spotify-Data/)
